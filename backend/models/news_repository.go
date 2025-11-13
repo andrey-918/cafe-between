@@ -22,15 +22,15 @@ func GetNewsByID(id int) (News, error) {
 	query := `SELECT id, title, description, imageURLs, createdAt, updatedAt, postedAt FROM news WHERE id = $1`
 	var item News
 	err := database.Pool.QueryRow(context.Background(), query, id).Scan(
-        &item.ID, &item.Title, &item.Description, &item.ImageURLs, &item.CreatedAt, &item.UpdatedAt, &item.PostedAt,
-    )
+		&item.ID, &item.Title, &item.Description, &item.ImageURLs, &item.CreatedAt, &item.UpdatedAt, &item.PostedAt,
+	)
 	if err != nil {
-        if err == pgx.ErrNoRows {
-            return News{}, ErrNewsNotFound
-        }
-        return News{}, err
-    }
-    return item, nil
+		if err == pgx.ErrNoRows {
+			return News{}, ErrNewsNotFound
+		}
+		return News{}, err
+	}
+	return item, nil
 }
 
 func GetNews() ([]News, error) {
@@ -65,8 +65,8 @@ func DelNews(id int) error {
 }
 
 func UpdateNews(id int, item News) error {
-	query := `UPDATE news SET title = $1, description = $2, imageURLs = $3, createdAt = $4, updatedAt = NOW(), postedAt = $5 WHERE id = $6`
-	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Description, item.ImageURLs, item.CreatedAt, item.PostedAt, id)
+	query := `UPDATE news SET title = $1, description = $2, imageURLs = $3, updatedAt = NOW(), postedAt = $5 WHERE id = $6`
+	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Description, item.ImageURLs, item.PostedAt, id)
 	if err != nil {
 		return err
 	}

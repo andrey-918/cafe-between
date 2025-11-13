@@ -19,22 +19,22 @@ func CreateMenuItem(item MenuItem) (int, error) {
 }
 
 func GetMenuItemByID(id int) (MenuItem, error) {
-	query := `SELECT id, title, price, imageURLs, calories, description, createdAt FROM menu WHERE id = $1`
+	query := `SELECT id, title, price, imageURLs, calories, description, createdAt, updatedAt FROM menu WHERE id = $1`
 	var item MenuItem
 	err := database.Pool.QueryRow(context.Background(), query, id).Scan(
-        &item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt,
-    )
+		&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt, &item.UpdatedAt,
+	)
 	if err != nil {
-        if err == pgx.ErrNoRows {
-            return MenuItem{}, ErrMenuItemNotFound
-        }
-        return MenuItem{}, err
-    }
-    return item, nil
+		if err == pgx.ErrNoRows {
+			return MenuItem{}, ErrMenuItemNotFound
+		}
+		return MenuItem{}, err
+	}
+	return item, nil
 }
 
 func GetMenu() ([]MenuItem, error) {
-	query := `SELECT id, title, price, imageURLs, calories, description, createdAt FROM menu`
+	query := `SELECT id, title, price, imageURLs, calories, description, createdAt, updatedAt FROM menu`
 	rows, err := database.Pool.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func GetMenu() ([]MenuItem, error) {
 	var menu []MenuItem
 	for rows.Next() {
 		var item MenuItem
-		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt)
+		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt, &item.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
