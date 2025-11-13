@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS menu (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    imageURLs TEXT[] NOT NULL,
+    calories INT,
+    description TEXT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

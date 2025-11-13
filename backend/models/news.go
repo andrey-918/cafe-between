@@ -5,7 +5,7 @@ import "time"
 type News struct {
 	ID 			int 		`json:"id"`
 	Title 		string 		`json:"title"`
-	Description string 		`json:"description"`
+	Description string 		`json:"description,omitempty"`
 	ImageURLs 	[]string 	`json:"imageURLs,omitempty"`
 	CreatedAt 	time.Time 	`json:"createdAt"`
 	UpdatedAt 	time.Time 	`json:"updatedAt"`
