@@ -2,6 +2,15 @@ import type { MenuItem, NewsItem } from './types';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
+const getAuthHeaders = (): Record<string, string> => {
+  const token = localStorage.getItem('token');
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 export const fetchMenu = async (): Promise<MenuItem[]> => {
   const response = await fetch(`${API_BASE_URL}/menu`);
   if (!response.ok) {
@@ -19,9 +28,11 @@ export const fetchMenuItem = async (id: number): Promise<MenuItem> => {
 };
 
 export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<MenuItem> => {
-  const response = await fetch(`${API_BASE_URL}/menu`, {
+  const headers = getAuthHeaders();
+  headers['Content-Type'] = 'application/json';
+  const response = await fetch(`${API_BASE_URL}/admin/menu`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(item),
   });
   if (!response.ok) {
@@ -31,9 +42,11 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | '
 };
 
 export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+  const headers = getAuthHeaders();
+  headers['Content-Type'] = 'application/json';
+  const response = await fetch(`${API_BASE_URL}/admin/menu/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(item),
   });
   if (!response.ok) {
@@ -42,8 +55,9 @@ export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'cr
 };
 
 export const deleteMenuItem = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/admin/menu/${id}`, {
     method: 'DELETE',
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     throw new Error('Failed to delete menu item');
@@ -67,9 +81,11 @@ export const fetchNewsItem = async (id: number): Promise<NewsItem> => {
 };
 
 export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt' | 'postedAt'>): Promise<NewsItem> => {
-  const response = await fetch(`${API_BASE_URL}/news`, {
+  const headers = getAuthHeaders();
+  headers['Content-Type'] = 'application/json';
+  const response = await fetch(`${API_BASE_URL}/admin/news`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(item),
   });
   if (!response.ok) {
@@ -79,9 +95,11 @@ export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | '
 };
 
 export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt' | 'postedAt'>): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/news/${id}`, {
+  const headers = getAuthHeaders();
+  headers['Content-Type'] = 'application/json';
+  const response = await fetch(`${API_BASE_URL}/admin/news/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(item),
   });
   if (!response.ok) {
@@ -90,8 +108,9 @@ export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'cr
 };
 
 export const deleteNewsItem = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/news/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/admin/news/${id}`, {
     method: 'DELETE',
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     throw new Error('Failed to delete news item');
