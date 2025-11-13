@@ -10,4 +10,5 @@ type MenuItem struct {
 	Calories 	int 		`json:"calories,omitempty"`
 	Description string		`json:"description,omitempty"`
 	CreatedAt	time.Time	`json:"createdAt"`
+	UpdatedAt	time.Time	`json:"updatedAt"`
 }

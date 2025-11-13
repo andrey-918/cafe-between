@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"./internal/handlers"
-	"./internal/database"
+	"github.com/andrey-918/cafe-between/internal/database"
+	"github.com/andrey-918/cafe-between/internal/handlers"
 
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -18,13 +19,25 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	r := mux.NewRouter()
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/menu", handlers.Menu)
-	mux.HandleFunc("/api/news", handlers.News)
+	r.HandleFunc("/api/menu", handlers.GetMenuHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/menu", handlers.CreateMenuItemHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/menu/{id}", handlers.GetMenuItemHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/menu/{id}", handlers.DelMenuItemHandler).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/menu/{id}", handlers.UpdateMenuHandler).Methods("PUT", "OPTIONS")
+	
+
+	r.HandleFunc("/api/news", handlers.GetNewsHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/news", handlers.CreateNewsHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/news/{id}", handlers.GetNewsByIdHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/news/{id}", handlers.DelNewsHandler).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/news/{id}", handlers.UpdateNewsHandler).Methods("PUT", "OPTIONS")
+	
+	
 
 	log.Printf("Server started at :%s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
-		log.Fatal(err)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		log.Fatalf("Connection failed: %v", err)
 	}
 }
