@@ -14,7 +14,8 @@ var ErrMenuItemNotFound = errors.New("menu item not found")
 func CreateMenuItem(item MenuItem) (int, error) {
 	query := `INSERT INTO menu (title, price, imageURLs, calories, description, createdAt, updatedAt) values ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
 	var id int
-	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, time.Now(), time.Now()).Scan(&id)
+	now := time.Now().UTC().Add(3 * time.Hour) // UTC+3 for Moscow
+	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, now, now).Scan(&id)
 	return id, err
 }
 
@@ -65,7 +66,7 @@ func DelMenuItem(id int) error {
 }
 
 func UpdateMenuItem(id int, item MenuItem) error {
-	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, updatedAt = NOW() WHERE id = $6`
+	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, updatedAt = NOW() + INTERVAL '3 hours' WHERE id = $6`
 	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, id)
 	if err != nil {
 		return err

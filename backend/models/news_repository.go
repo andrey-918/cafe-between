@@ -14,7 +14,8 @@ var ErrNewsNotFound = errors.New("News item not found")
 func CreateNews(item News) (int, error) {
 	query := `INSERT INTO news (title, description, imageURLs, createdAt, updatedAt, postedAt) values ($1, $2, $3, $4, $5, $6) RETURNING id`
 	var id int
-	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Description, item.ImageURLs, time.Now(), time.Now(), item.PostedAt).Scan(&id)
+	now := time.Now().UTC().Add(3 * time.Hour) // UTC+3 for Moscow
+	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Description, item.ImageURLs, now, now, item.PostedAt).Scan(&id)
 	return id, err
 }
 
@@ -65,7 +66,7 @@ func DelNews(id int) error {
 }
 
 func UpdateNews(id int, item News) error {
-	query := `UPDATE news SET title = $1, description = $2, imageURLs = $3, updatedAt = NOW(), postedAt = $5 WHERE id = $6`
+	query := `UPDATE news SET title = $1, description = $2, imageURLs = $3, updatedAt = NOW() + INTERVAL '3 hours', postedAt = $4 WHERE id = $5`
 	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Description, item.ImageURLs, item.PostedAt, id)
 	if err != nil {
 		return err
