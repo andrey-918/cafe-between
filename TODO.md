@@ -1,0 +1,4 @@
+- [x] Add logout button to AdminMenu page
+- [x] Add logout button to AdminNews page
+- [x] Verify /login route is accessible directly
+- [x] Test admin access via direct /login link

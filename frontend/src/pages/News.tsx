@@ -25,27 +25,39 @@ const News = () => {
   }, []);
 
   return (
-    <main>
-      <section className="news">
-        <h2>Все новости и мероприятия</h2>
-        {loading && <p>Загрузка...</p>}
-        {error && <p>{error}</p>}
+    <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="mb-16">
+        <h1 className="text-gray-900 mb-4">Все новости и мероприятия</h1>
+        <p className="text-gray-500 max-w-2xl">
+          Следите за нашими новостями и предстоящими событиями
+        </p>
+      </div>
+
+      {loading && <p>Загрузка...</p>}
+      {error && <p>{error}</p>}
+      <div className="news-grid">
         {news.map((item) => (
-          <div key={item.id} className="event">
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-            {item.imageURLs && item.imageURLs.length > 0 && (
-              <div className="photos">
-                {item.imageURLs.slice(0, 3).map((url, index) => (
-                  <img key={index} src={url} alt={`News ${item.id} photo ${index + 1}`} />
-                ))}
+          <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
+            <article className="news-item-card">
+              {item.imageURLs && item.imageURLs.length > 0 && (
+                <div className="news-item-image">
+                  <img src={item.imageURLs[0]} alt={item.title} />
+                </div>
+              )}
+              <div className="news-item-content">
+                <div className="news-item-meta">
+                  <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
+                  <span className="news-item-category">Событие</span>
+                </div>
+                <h3 className="news-item-title">{item.title}</h3>
+                <p className="news-item-description">{item.description}</p>
+                <span className="news-item-link-text">Подробнее →</span>
               </div>
-            )}
-            <Link to={`/news/${item.id}`} className="details-link">Подробнее</Link>
-          </div>
+            </article>
+          </Link>
         ))}
-      </section>
-    </main>
+      </div>
+    </div>
   );
 };
 

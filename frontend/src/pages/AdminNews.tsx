@@ -123,6 +123,11 @@ const AdminNews = () => {
                   onChange={(e) => updateImageURL(index, e.target.value)}
                   placeholder="https://example.com/image.jpg"
                 />
+                {url && (
+                  <div className="image-preview">
+                    <img src={url} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                  </div>
+                )}
                 {formData.imageURLs.length > 1 && (
                   <button type="button" onClick={() => removeImageURL(index)}>Remove</button>
                 )}

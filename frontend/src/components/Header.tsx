@@ -9,22 +9,27 @@ const Header = () => {
   };
 
   return (
-    <header>
-      <img src="/info/logo.jpeg" alt="Cafe Between Logo" className="logo" />
-      <nav>
-        <Link to="/" className="nav-link">Главная</Link>
-        <Link to="/menu" className="nav-link">Меню</Link>
-        <Link to="/news" className="nav-link">Новости</Link>
-        {isAuthenticated ? (
-          <>
-            <Link to="/admin/menu" className="nav-link">Админ Меню</Link>
-            <Link to="/admin/news" className="nav-link">Админ Новости</Link>
-            <button onClick={handleLogout} className="logout-btn">Выйти</button>
-          </>
-        ) : (
-          <Link to="/login" className="nav-link">Войти</Link>
-        )}
-      </nav>
+    <header className="header">
+      <div className="header-container">
+        <div className="header-content">
+          <Link to="/" className="logo-link">
+            <span className="logo-text">BETWEEN</span>
+          </Link>
+
+          <nav className="nav">
+            <Link to="/" className="nav-link">Главная</Link>
+            <Link to="/news" className="nav-link">События</Link>
+            <Link to="/menu" className="nav-link">Меню</Link>
+            {isAuthenticated && (
+              <>
+                <Link to="/admin/menu" className="nav-link">Редактировать меню</Link>
+                <Link to="/admin/news" className="nav-link">Редактировать события</Link>
+                <button onClick={handleLogout} className="nav-link logout-btn">Выйти</button>
+              </>
+            )}
+          </nav>
+        </div>
+      </div>
     </header>
   );
 };

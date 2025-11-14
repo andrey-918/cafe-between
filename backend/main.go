@@ -26,7 +26,7 @@ func main() {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 			if r.Method == "OPTIONS" {
@@ -56,6 +56,14 @@ func main() {
 	adminRouter := r.PathPrefix("/api/admin").Subrouter()
 	adminRouter.Use(handlers.JWTMiddleware)
 	adminRouter.HandleFunc("/menu", handlers.GetMenuHandler).Methods("GET", "OPTIONS")
+	adminRouter.HandleFunc("/menu", handlers.CreateMenuItemHandler).Methods("POST", "OPTIONS")
+	adminRouter.HandleFunc("/menu/{id}", handlers.UpdateMenuHandler).Methods("PUT", "OPTIONS")
+	adminRouter.HandleFunc("/menu/{id}", handlers.DelMenuItemHandler).Methods("DELETE", "OPTIONS")
+
+	adminRouter.HandleFunc("/news", handlers.GetNewsHandler).Methods("GET", "OPTIONS")
+	adminRouter.HandleFunc("/news", handlers.CreateNewsHandler).Methods("POST", "OPTIONS")
+	adminRouter.HandleFunc("/news/{id}", handlers.UpdateNewsHandler).Methods("PUT", "OPTIONS")
+	adminRouter.HandleFunc("/news/{id}", handlers.DelNewsHandler).Methods("DELETE", "OPTIONS")
 
 	log.Printf("Server started at :%s", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {

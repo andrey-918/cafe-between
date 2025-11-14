@@ -23,22 +23,24 @@ function App() {
     <Router>
       <div className="app">
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<MenuItemDetail />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/news/:id" element={<NewsItemDetail />} />
-          <Route path="/login" element={<Login />} />
-          {isAuthenticated ? (
-            <>
-              <Route path="/admin/menu" element={<AdminMenu />} />
-              <Route path="/admin/news" element={<AdminNews />} />
-            </>
-          ) : (
-            <Route path="/admin/*" element={<Navigate to="/login" replace />} />
-          )}
-        </Routes>
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/menu/:id" element={<MenuItemDetail />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsItemDetail />} />
+            <Route path="/login" element={<Login />} />
+            {isAuthenticated ? (
+              <>
+                <Route path="/admin/menu" element={<AdminMenu />} />
+                <Route path="/admin/news" element={<AdminNews />} />
+              </>
+            ) : (
+              <Route path="/admin/*" element={<Navigate to="/login" replace />} />
+            )}
+          </Routes>
+        </main>
         <Footer />
       </div>
     </Router>
