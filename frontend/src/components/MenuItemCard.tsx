@@ -7,9 +7,10 @@ interface MenuItemCardProps {
   description: string;
   price: string;
   calories?: number;
-  image?: string;
+  image?: string | File;
   variants?: string[];
   popular?: boolean;
+  className?: string;
 }
 
 export function MenuItemCard({
@@ -20,29 +21,40 @@ export function MenuItemCard({
   calories,
   image,
   variants,
-  popular
+  popular,
+  className
 }: MenuItemCardProps) {
+  const getImageSrc = (img: string | File) => {
+    if (typeof img === 'string') {
+      if (img.startsWith('/uploads/')) {
+        return `http://localhost:8080${img}`;
+      }
+      return img;
+    }
+    return URL.createObjectURL(img);
+  };
+
   return (
     <Link to={`/menu/${id}`} className="menu-item-card-link">
-      <article className="menu-item-card">
+      <article className={`menu-item-card ${className || ''}`}>
         {image && (
           <div className="menu-item-card-image">
             <ImageWithFallback
-              src={image}
+              src={getImageSrc(image)}
               alt={name}
               className="menu-item-card-image-img"
             />
+            {popular && (
+              <div className="menu-item-card-popular-badge">
+                <span>★ Популярное</span>
+              </div>
+            )}
           </div>
         )}
 
         <div className="menu-item-card-content">
           <div className="menu-item-card-header">
-            <div className="menu-item-card-title-group">
-              <h3 className="menu-item-card-title">{name}</h3>
-              {popular && (
-                <span className="menu-item-card-popular">★</span>
-              )}
-            </div>
+            <h3 className="menu-item-card-title">{name}</h3>
             <span className="menu-item-card-price">{price} ₽</span>
           </div>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { MenuItem } from '../types';
 import { fetchMenu } from '../api';
 import { MenuItemCard } from '../components/MenuItemCard';
+
 import '../style/menu.css';
 
 const Menu = () => {
@@ -25,11 +26,11 @@ const Menu = () => {
 
   // Category display names
   const categoryNames: Record<string, string> = {
-    main_meal: 'Основное меню',
-    snacks: 'Закуски',
-    breakfast: 'Завтрак',
-    desserts: 'Десерты',
-    drinks: 'Напитки',
+      main_meal: 'Основное меню',
+      snacks: 'Закуски',
+      breakfast: 'Завтрак',
+      desserts: 'Десерты',
+      drinks: 'Напитки',
   };
 
   // Category order
@@ -66,30 +67,33 @@ const Menu = () => {
           </p>
         </div>
 
-        {categories.map((category) => (
-          <section key={category} className="menu-section">
-            <h2 className="menu-section-title">
-              {categoryNames[category] || category}
-            </h2>
+        {categories.map((category) => {
+          return (
+            <section key={category} className="menu-section fade-in">
+              <h2 className="menu-section-title">
+                {categoryNames[category] || category}
+              </h2>
 
-            {loading && <p>Загрузка...</p>}
-            {error && <p>{error}</p>}
-            <div className="menu-grid">
-              {groupedMenu[category]?.map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  id={item.id}
-                  name={item.title}
-                  description={item.description || ''}
-                  price={item.price.toString()}
-                  calories={item.calories}
-                  image={item.imageURLs?.[0]}
-                  popular={false} // You can add logic to determine if item is popular
-                />
-              ))}
-            </div>
-          </section>
-        ))}
+              {loading && <p>Загрузка...</p>}
+              {error && <p>{error}</p>}
+              <div className="menu-grid">
+                {groupedMenu[category]?.map((item) => (
+                  <MenuItemCard
+                    key={item.id}
+                    id={item.id}
+                    name={item.title}
+                    description={item.description || ''}
+                    price={item.price.toString()}
+                    calories={item.calories}
+                    image={item.imageURLs?.[0] as string | File}
+                    popular={false} // You can add logic to determine if item is popular
+                    className="fade-in"
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   )

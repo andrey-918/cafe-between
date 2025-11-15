@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem } from '../types';
 import { fetchNews } from '../api';
+
 import '../style/news.css';
 
 const News = () => {
@@ -37,26 +38,39 @@ const News = () => {
       {loading && <p>Загрузка...</p>}
       {error && <p>{error}</p>}
       <div className="news-grid">
-        {news.map((item) => (
-          <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
-            <article className="news-item-card">
-              {item.imageURLs && item.imageURLs.length > 0 && (
-                <div className="news-item-image">
-                  <img src={item.imageURLs[0]} alt={item.title} />
+        {news.map((item) => {
+          const getImageSrc = (img: string | File) => {
+            if (typeof img === 'string') {
+              if (img.startsWith('/uploads/')) {
+                return `http://localhost:8080${img}`;
+              }
+              return img;
+            }
+            return URL.createObjectURL(img);
+          };
+
+          return (
+            <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
+              <article className="news-item-card fade-in">
+                {item.imageURLs && item.imageURLs.length > 0 && (
+                  <div className="news-item-image">
+                    <img src={getImageSrc(item.imageURLs[0])} alt={item.title} />
+                  </div>
+                )}
+                <div className="news-item-content">
+                  <h3 className="news-item-title">{item.title}</h3>
+                  <p className="news-item-description">{item.preview || item.description}</p>
+                  <div className="news-item-read-more">
+                    <span className="news-item-link-text">Читать далее</span>
+                    <svg className="news-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                    </svg>
+                  </div>
                 </div>
-              )}
-              <div className="news-item-content">
-                <div className="news-item-meta">
-                  <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
-                  <span className="news-item-category">Событие</span>
-                </div>
-                <h3 className="news-item-title">{item.title}</h3>
-                <p className="news-item-description">{item.preview || item.description}</p>
-                <span className="news-item-link-text">Подробнее →</span>
-              </div>
-            </article>
-          </Link>
-        ))}
+              </article>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

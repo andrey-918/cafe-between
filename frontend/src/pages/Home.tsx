@@ -4,11 +4,14 @@ import type { NewsItem, MenuItem } from '../types';
 import { fetchNews, fetchMenu } from '../api';
 import { MenuItemCard } from '../components/MenuItemCard';
 
+
 const Home = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -63,7 +66,7 @@ const Home = () => {
       </section>
 
       {/* Recent News */}
-      <section className="recent-news">
+      <section className="recent-news fade-in">
         <div className="section-header">
           <h2>Новости</h2>
           <Link to="/news" className="view-all-link">Все новости →</Link>
@@ -72,36 +75,48 @@ const Home = () => {
         {loading && <p>Загрузка...</p>}
         {error && <p>{error}</p>}
         <div className="home-news-grid">
-          {news.map((item) => (
-            <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
-              <article className="news-item-card">
-                <div className="news-item-image">
-                  <img src={item.imageURLs?.[0] || '/placeholder.jpg'} alt={item.title} />
-                </div>
-                <div className="news-item-content">
-                  <div className="news-item-meta">
-                    <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
-                    <span className="news-item-category">Событие</span>
+          {news.map((item, index) => {
+            const getImageSrc = (img: string | File) => {
+              if (typeof img === 'string') {
+                if (img.startsWith('/uploads/')) {
+                  return `http://localhost:8080${img}`;
+                }
+                return img;
+              }
+              return URL.createObjectURL(img);
+            };
+
+            return (
+              <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
+                <article className={`news-item-card ${index % 2 === 0 ? 'slide-in-left-scroll' : 'slide-in-right-scroll'}`}>
+                  <div className="news-item-image">
+                    <img src={item.imageURLs?.[0] ? getImageSrc(item.imageURLs[0]) : '/placeholder.jpg'} alt={item.title} />
                   </div>
-                  <h3 className="news-item-title">{item.title}</h3>
-                  <p className="news-item-description">{item.description}</p>
-                  <span className="news-item-link-text">Подробнее →</span>
-                </div>
-              </article>
-            </Link>
-          ))}
+                  <div className="news-item-content">
+                    <div className="news-item-meta">
+                      <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
+                      <span className="news-item-category">Событие</span>
+                    </div>
+                    <h3 className="news-item-title">{item.title}</h3>
+                    <p className="news-item-description">{item.description}</p>
+                    <span className="news-item-link-text">Подробнее →</span>
+                  </div>
+                </article>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
       {/* Popular Menu Items */}
-      <section className="popular-menu">
+      <section className="popular-menu fade-in">
         <div className="section-header">
           <h2>Популярные позиции</h2>
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
         </div>
 
         <div className="menu-grid">
-          {menu.map((item) => (
+          {menu.map((item, index) => (
             <MenuItemCard
               key={item.id}
               id={item.id}
@@ -111,6 +126,7 @@ const Home = () => {
               calories={item.calories}
               image={item.imageURLs?.[0]}
               popular={true} // Assuming these are popular
+              className={index % 2 === 0 ? 'scale-in-scroll' : 'bounce-in-scroll'}
             />
           ))}
         </div>

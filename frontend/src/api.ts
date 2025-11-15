@@ -28,12 +28,22 @@ export const fetchMenuItem = async (id: number): Promise<MenuItem> => {
 };
 
 export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<MenuItem> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('price', item.price.toString());
+  formData.append('calories', (item.calories || 0).toString());
+  formData.append('description', item.description || '');
+  formData.append('category', item.category);
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/menu`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to create menu item');
@@ -42,12 +52,24 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | '
 };
 
 export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('price', item.price.toString());
+  formData.append('calories', (item.calories || 0).toString());
+  formData.append('description', item.description || '');
+  formData.append('category', item.category);
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string') as string[];
+  formData.append('existingImages', JSON.stringify(existingImages));
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/menu/${id}`, {
     method: 'PUT',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to update menu item');
@@ -81,12 +103,21 @@ export const fetchNewsItem = async (id: number): Promise<NewsItem> => {
 };
 
 export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<NewsItem> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('preview', item.preview || '');
+  formData.append('description', item.description || '');
+  formData.append('postedAt', item.postedAt);
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/news`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to create news item');
@@ -95,12 +126,23 @@ export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | '
 };
 
 export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('preview', item.preview || '');
+  formData.append('description', item.description || '');
+  formData.append('postedAt', item.postedAt);
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string') as string[];
+  formData.append('existingImages', JSON.stringify(existingImages));
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/news/${id}`, {
     method: 'PUT',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to update news item');

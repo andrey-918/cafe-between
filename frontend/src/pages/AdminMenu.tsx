@@ -10,7 +10,7 @@ const AdminMenu = () => {
   const [formData, setFormData] = useState({
     title: '',
     price: 0,
-    imageURLs: [''],
+    imageURLs: [] as (string | File)[],
     calories: 0,
     description: '',
     category: '',
@@ -51,7 +51,7 @@ const AdminMenu = () => {
     setFormData({
       title: item.title,
       price: item.price,
-      imageURLs: item.imageURLs || [''],
+      imageURLs: item.imageURLs || [],
       calories: item.calories || 0,
       description: item.description || '',
       category: item.category || '',
@@ -74,7 +74,7 @@ const AdminMenu = () => {
     setFormData({
       title: '',
       price: 0,
-      imageURLs: [''],
+      imageURLs: [],
       calories: 0,
       description: '',
       category: '',
@@ -85,7 +85,7 @@ const AdminMenu = () => {
     setFormData({ ...formData, imageURLs: [...formData.imageURLs, ''] });
   };
 
-  const updateImageURL = (index: number, value: string) => {
+  const updateImageURL = (index: number, value: string | File) => {
     const newURLs = [...formData.imageURLs];
     newURLs[index] = value;
     setFormData({ ...formData, imageURLs: newURLs });
@@ -125,19 +125,37 @@ const AdminMenu = () => {
             />
           </div>
           <div className="form-group">
-            <label>Image URLs:</label>
+            <label>Images:</label>
             {formData.imageURLs.map((url, index) => (
               <div key={index} className="image-url-group">
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => updateImageURL(index, e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                />
-                {url && (
-                  <div className="image-preview">
-                    <img src={url} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                  </div>
+                {typeof url === 'string' ? (
+                  <>
+                    <input
+                      type="url"
+                      value={url}
+                      onChange={(e) => updateImageURL(index, e.target.value)}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    {url && (
+                      <div className="image-preview">
+                        <img src={url} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) updateImageURL(index, file);
+                      }}
+                    />
+                    <div className="image-preview">
+                      <img src={URL.createObjectURL(url)} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                    </div>
+                  </>
                 )}
                 {formData.imageURLs.length > 1 && (
                   <button type="button" onClick={() => removeImageURL(index)}>Remove</button>
@@ -145,6 +163,7 @@ const AdminMenu = () => {
               </div>
             ))}
             <button type="button" onClick={addImageURL}>Add Image URL</button>
+            <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })}>Add File</button>
           </div>
           <div className="form-group">
             <label>Calories:</label>
