@@ -31,6 +31,7 @@ function App() {
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsItemDetail />} />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<Home />} />
             {isAuthenticated ? (
               <>
                 <Route path="/admin/menu" element={<AdminMenu />} />
