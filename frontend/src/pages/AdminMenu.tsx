@@ -13,6 +13,7 @@ const AdminMenu = () => {
     imageURLs: [''],
     calories: 0,
     description: '',
+    category: '',
   });
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const AdminMenu = () => {
       imageURLs: item.imageURLs || [''],
       calories: item.calories || 0,
       description: item.description || '',
+      category: item.category || '',
     });
   };
 
@@ -75,6 +77,7 @@ const AdminMenu = () => {
       imageURLs: [''],
       calories: 0,
       description: '',
+      category: '',
     });
   };
 
@@ -149,6 +152,15 @@ const AdminMenu = () => {
               type="number"
               value={formData.calories}
               onChange={(e) => setFormData({ ...formData, calories: parseInt(e.target.value) })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Category:</label>
+            <input
+              type="text"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              required
             />
           </div>
           <div className="form-group">

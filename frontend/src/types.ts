@@ -5,6 +5,7 @@ export interface MenuItem {
   imageURLs: string[];
   calories?: number;
   description?: string;
+  category: string;
   createdAt: string;
   updatedAt: string;
 }

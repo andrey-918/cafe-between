@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS menu (
     imageURLs TEXT[] NOT NULL,
     calories INT,
     description TEXT,
+    category TEXT,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

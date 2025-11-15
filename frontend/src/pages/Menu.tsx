@@ -22,9 +22,26 @@ const Menu = () => {
     loadMenu();
   }, []);
 
-  // Group menu items by category (assuming we add category to MenuItem type or derive from data)
-  // For now, we'll display all items in one section
-  const categories = ['Все позиции']; // Placeholder, can be expanded later
+  // Category display names
+  const categoryNames: Record<string, string> = {
+    main_meal: 'Основное меню',
+    snacks: 'Закуски',
+    breakfast: 'Завтрак',
+    desserts: 'Десерты',
+    drinks: 'Напитки',
+  };
+
+  // Group menu items by category
+  const groupedMenu = menu.reduce((acc, item) => {
+    const category = item.category || 'Без категории';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(item);
+    return acc;
+  }, {} as Record<string, MenuItem[]>);
+
+  const categories = Object.keys(groupedMenu);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
@@ -39,13 +56,13 @@ const Menu = () => {
       {categories.map((category) => (
         <section key={category} className="mb-16">
           <h2 className="text-gray-900 mb-8 pb-4 border-b border-gray-200">
-            {category}
+            {categoryNames[category] || category}
           </h2>
 
           {loading && <p>Загрузка...</p>}
           {error && <p>{error}</p>}
           <div className="menu-grid">
-            {menu.map((item) => (
+            {groupedMenu[category]?.map((item) => (
               <MenuItemCard
                 key={item.id}
                 id={item.id}

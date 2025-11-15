@@ -1,4 +1,0 @@
-- [x] Define CSS custom properties for colors in index.css with light and dark variants
-- [x] Update App.css to use CSS variables instead of hardcoded colors
-- [x] Update footer.css to use CSS variables instead of hardcoded colors
-- [x] Test the theme switching functionality (dev server running at http://localhost:5173/)

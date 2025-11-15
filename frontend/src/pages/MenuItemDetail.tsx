@@ -42,6 +42,13 @@ const MenuItemDetail = () => {
         <p><strong>Цена:</strong> {item.price} руб.</p>
         {item.calories && <p><strong>Калории:</strong> {item.calories}</p>}
         {item.description && <p><strong>Описание:</strong> {item.description}</p>}
+        <p><strong>Категория:</strong> {
+          item.category === 'main_meal' ? 'Основное меню' :
+          item.category === 'snacks' ? 'Закуски' :
+          item.category === 'desserts' ? 'Десерты' :
+          item.category === 'drinks' ? 'Напитки' :
+          item.category
+        }</p>
         <p><strong>Создано:</strong> {new Date(item.createdAt).toLocaleDateString()}</p>
         <p><strong>Обновлено:</strong> {new Date(item.updatedAt).toLocaleDateString()}</p>
       </section>

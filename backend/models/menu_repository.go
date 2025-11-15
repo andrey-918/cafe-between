@@ -12,18 +12,18 @@ import (
 var ErrMenuItemNotFound = errors.New("menu item not found")
 
 func CreateMenuItem(item MenuItem) (int, error) {
-	query := `INSERT INTO menu (title, price, imageURLs, calories, description, createdAt, updatedAt) values ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
+	query := `INSERT INTO menu (title, price, imageURLs, calories, description, category, createdAt, updatedAt) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
 	var id int
 	now := time.Now().UTC().Add(3 * time.Hour) // UTC+3 for Moscow
-	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, now, now).Scan(&id)
+	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Category, item.Calories, item.Description, now, now).Scan(&id)
 	return id, err
 }
 
 func GetMenuItemByID(id int) (MenuItem, error) {
-	query := `SELECT id, title, price, imageURLs, calories, description, createdAt, updatedAt FROM menu WHERE id = $1`
+	query := `SELECT id, title, price, imageURLs, calories, description, category, createdAt, updatedAt FROM menu WHERE id = $1`
 	var item MenuItem
 	err := database.Pool.QueryRow(context.Background(), query, id).Scan(
-		&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt, &item.UpdatedAt,
+		&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.Category, &item.CreatedAt, &item.UpdatedAt,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -35,7 +35,7 @@ func GetMenuItemByID(id int) (MenuItem, error) {
 }
 
 func GetMenu() ([]MenuItem, error) {
-	query := `SELECT id, title, price, imageURLs, calories, description, createdAt, updatedAt FROM menu`
+	query := `SELECT id, title, price, imageURLs, calories, description, category, createdAt, updatedAt FROM menu`
 	rows, err := database.Pool.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func GetMenu() ([]MenuItem, error) {
 	var menu []MenuItem
 	for rows.Next() {
 		var item MenuItem
-		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.CreatedAt, &item.UpdatedAt)
+		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.Category, &item.CreatedAt, &item.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -66,8 +66,8 @@ func DelMenuItem(id int) error {
 }
 
 func UpdateMenuItem(id int, item MenuItem) error {
-	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, updatedAt = NOW() + INTERVAL '3 hours' WHERE id = $6`
-	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, id)
+	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, category = $6 updatedAt = NOW() + INTERVAL '3 hours' WHERE id = $7`
+	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, item.Category, id)
 	if err != nil {
 		return err
 	}

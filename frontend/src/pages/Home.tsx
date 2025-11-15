@@ -17,7 +17,7 @@ const Home = () => {
         const sortedNews = newsData.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
         setNews(sortedNews.slice(0, 3));
         // Assume all menu items are popular for now, or filter by price > some value
-        setMenu(menuData.slice(0, 4)); // Take first 4 as popular
+        setMenu(menuData.slice(0, 6)); // Take first 6 as popular
       } catch (err) {
         setError('Failed to load data');
       } finally {
