@@ -66,7 +66,7 @@ func DelMenuItem(id int) error {
 }
 
 func UpdateMenuItem(id int, item MenuItem) error {
-	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, category = $6 updatedAt = NOW() + INTERVAL '3 hours' WHERE id = $7`
+	query := `UPDATE menu SET title = $1, price = $2, imageURLs = $3, calories = $4, description = $5, category = $6, updatedAt = NOW() + INTERVAL '3 hours' WHERE id = $7`
 	result, err := database.Pool.Exec(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, item.Category, id)
 	if err != nil {
 		return err

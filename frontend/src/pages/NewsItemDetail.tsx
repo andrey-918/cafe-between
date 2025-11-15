@@ -39,6 +39,7 @@ const NewsItemDetail = () => {
             ))}
           </div>
         )}
+        {item.preview && <p className="preview">{item.preview}</p>}
         <p>{item.description}</p>
         <p><strong>Опубликовано:</strong> {new Date(item.postedAt).toLocaleDateString()}</p>
         <p><strong>Создано:</strong> {new Date(item.createdAt).toLocaleDateString()}</p>

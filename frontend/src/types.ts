@@ -13,6 +13,7 @@ export interface MenuItem {
 export interface NewsItem {
   id: number;
   title: string;
+  preview?: string;
   description?: string;
   imageURLs?: string[];
   createdAt: string;

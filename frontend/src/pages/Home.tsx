@@ -14,8 +14,9 @@ const Home = () => {
     const loadData = async () => {
       try {
         const [newsData, menuData] = await Promise.all([fetchNews(), fetchMenu()]);
-        const sortedNews = newsData.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
-        setNews(sortedNews.slice(0, 3));
+        const now = new Date();
+        const visibleNews = newsData.filter(item => new Date(item.postedAt) <= now);
+        setNews(visibleNews.slice(0, 3));
         // Assume all menu items are popular for now, or filter by price > some value
         setMenu(menuData.slice(0, 6)); // Take first 6 as popular
       } catch (err) {

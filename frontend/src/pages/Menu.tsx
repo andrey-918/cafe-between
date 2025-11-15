@@ -31,6 +31,9 @@ const Menu = () => {
     drinks: 'Напитки',
   };
 
+  // Category order
+  const categoryOrder = ['main_meal', 'snacks', 'breakfast', 'desserts', 'drinks'];
+
   // Group menu items by category
   const groupedMenu = menu.reduce((acc, item) => {
     const category = item.category || 'Без категории';
@@ -41,7 +44,15 @@ const Menu = () => {
     return acc;
   }, {} as Record<string, MenuItem[]>);
 
-  const categories = Object.keys(groupedMenu);
+  // Sort categories by predefined order
+  const categories = Object.keys(groupedMenu).sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    if (indexA === -1 && indexB === -1) return 0;
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">

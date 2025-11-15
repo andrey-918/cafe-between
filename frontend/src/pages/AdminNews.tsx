@@ -7,10 +7,19 @@ const AdminNews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
+  const getMoscowTimeString = () => {
+    const now = new Date();
+    const moscowOffset = 3 * 60 * 60 * 1000; // 3 hours in ms
+    const moscowTime = new Date(now.getTime() + moscowOffset);
+    return moscowTime.toISOString().slice(0, 16);
+  };
+
   const [formData, setFormData] = useState({
     title: '',
+    preview: '',
     description: '',
     imageURLs: [''],
+    postedAt: getMoscowTimeString(),
   });
 
   useEffect(() => {
@@ -30,11 +39,23 @@ const AdminNews = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let postedAt: string;
+    if (formData.postedAt) {
+      // Convert the input (which is in local time, but we treat as Moscow) to UTC
+      const selectedTime = new Date(formData.postedAt + ':00'); // Add seconds
+      postedAt = selectedTime.toISOString();
+    } else {
+      postedAt = new Date().toISOString();
+    }
+    const dataToSend = {
+      ...formData,
+      postedAt,
+    };
     try {
       if (editingItem) {
-        await updateNewsItem(editingItem.id, formData);
+        await updateNewsItem(editingItem.id, dataToSend);
       } else {
-        await createNewsItem(formData);
+        await createNewsItem(dataToSend);
       }
       loadNews();
       resetForm();
@@ -45,10 +66,16 @@ const AdminNews = () => {
 
   const handleEdit = (item: NewsItem) => {
     setEditingItem(item);
+    // Convert postedAt from UTC to Moscow time for display
+    const postedAtMoscow = new Date(item.postedAt);
+    postedAtMoscow.setHours(postedAtMoscow.getHours() + 3); // Add 3 hours for Moscow
+    const postedAtString = postedAtMoscow.toISOString().slice(0, 16);
     setFormData({
       title: item.title,
+      preview: item.preview || '',
       description: item.description || '',
       imageURLs: item.imageURLs || [''],
+      postedAt: postedAtString,
     });
   };
 
@@ -67,8 +94,10 @@ const AdminNews = () => {
     setEditingItem(null);
     setFormData({
       title: '',
+      preview: '',
       description: '',
       imageURLs: [''],
+      postedAt: getMoscowTimeString(),
     });
   };
 
@@ -107,10 +136,25 @@ const AdminNews = () => {
             />
           </div>
           <div className="form-group">
+            <label>Preview:</label>
+            <textarea
+              value={formData.preview}
+              onChange={(e) => setFormData({ ...formData, preview: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
             <label>Description:</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Posted At (Moscow time):</label>
+            <input
+              type="datetime-local"
+              value={formData.postedAt}
+              onChange={(e) => setFormData({ ...formData, postedAt: e.target.value })}
             />
           </div>
           <div className="form-group">
@@ -149,6 +193,7 @@ const AdminNews = () => {
                 <div className="item-info">
                   <h4>{item.title}</h4>
                   <p>{item.description}</p>
+                  <small>Posted At: {new Date(item.postedAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}</small>
                 </div>
                 <div className="item-actions">
                   <button onClick={() => handleEdit(item)}>Edit</button>

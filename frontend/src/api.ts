@@ -80,7 +80,7 @@ export const fetchNewsItem = async (id: number): Promise<NewsItem> => {
   return response.json();
 };
 
-export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt' | 'postedAt'>): Promise<NewsItem> => {
+export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<NewsItem> => {
   const headers = getAuthHeaders();
   headers['Content-Type'] = 'application/json';
   const response = await fetch(`${API_BASE_URL}/admin/news`, {
@@ -94,7 +94,7 @@ export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | '
   return response.json();
 };
 
-export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt' | 'postedAt'>): Promise<void> => {
+export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
   const headers = getAuthHeaders();
   headers['Content-Type'] = 'application/json';
   const response = await fetch(`${API_BASE_URL}/admin/news/${id}`, {
