@@ -118,9 +118,9 @@ const AdminMenu = () => {
           <div className="form-group">
             <label>Price:</label>
             <input
-              type="number"
+              type="text"
               value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
               required
             />
           </div>
@@ -149,9 +149,9 @@ const AdminMenu = () => {
           <div className="form-group">
             <label>Calories:</label>
             <input
-              type="number"
+              type="text"
               value={formData.calories}
-              onChange={(e) => setFormData({ ...formData, calories: parseInt(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, calories: parseInt(e.target.value) || 0 })}
             />
           </div>
           <div className="form-group">
@@ -167,8 +167,12 @@ const AdminMenu = () => {
             <label>Description:</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
+              maxLength={250}
+              rows={3}
+              style={{ resize: 'vertical', minHeight: '60px', maxHeight: '120px' }}
             />
+            <small>{formData.description.length}/250 characters</small>
           </div>
           <div className="form-actions">
             <button type="submit">{editingItem ? 'Update' : 'Create'}</button>

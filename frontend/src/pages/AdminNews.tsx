@@ -139,15 +139,23 @@ const AdminNews = () => {
             <label>Preview:</label>
             <textarea
               value={formData.preview}
-              onChange={(e) => setFormData({ ...formData, preview: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 50) })}
+              maxLength={50}
+              rows={2}
+              style={{ resize: 'vertical', minHeight: '40px', maxHeight: '80px' }}
             />
+            <small>{formData.preview.length}/50 characters</small>
           </div>
           <div className="form-group">
             <label>Description:</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
+              maxLength={250}
+              rows={4}
+              style={{ resize: 'vertical', minHeight: '80px', maxHeight: '160px' }}
             />
+            <small>{formData.description.length}/250 characters</small>
           </div>
           <div className="form-group">
             <label>Posted At (Moscow time):</label>

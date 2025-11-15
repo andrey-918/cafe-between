@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem } from '../types';
 import { fetchNews } from '../api';
+import '../style/news.css';
 
 const News = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -25,10 +26,10 @@ const News = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
-      <div className="mb-16">
-        <h1 className="text-gray-900 mb-4">Все новости и мероприятия</h1>
-        <p className="text-gray-500 max-w-2xl">
+    <div className="news-container">
+      <div className="news-header">
+        <h1 className="news-title">Все новости и мероприятия</h1>
+        <p className="news-description">
           Следите за нашими новостями и предстоящими событиями
         </p>
       </div>
