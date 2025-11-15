@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS menu (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     price INT NOT NULL,
-    imageURLs TEXT[] NOT NULL,
+    imageURLs TEXT[],
     calories INT,
     description TEXT,
     category TEXT,

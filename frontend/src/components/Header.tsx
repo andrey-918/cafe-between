@@ -13,7 +13,7 @@ const Header = () => {
       <div className="header-container">
         <div className="header-content">
           <Link to="/" className="logo-link">
-            <span className="logo-text">BETWEEN</span>
+            <span className="logo-text">Cafe</span>
           </Link>
 
           <nav className="nav">

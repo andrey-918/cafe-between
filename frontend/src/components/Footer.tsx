@@ -5,7 +5,7 @@ export function Footer() {
         <div className="footer-main">
           {/* About */}
           <div className="footer-section">
-            <h3 className="footer-title">BETWEEN</h3>
+            <h3 className="footer-title">Cafe</h3>
             <p className="footer-text">
               Пространство между кофе и культурой
             </p>
@@ -18,7 +18,7 @@ export function Footer() {
               <p>ул. Пушкина, 15</p>
               <p>Москва, 101000</p>
               <p className="footer-text-spacing">+7 (495) 123-45-67</p>
-              <p>hello@between.cafe</p>
+              <p>hello@Cafe.cafe</p>
             </div>
           </div>
 
@@ -37,10 +37,10 @@ export function Footer() {
           <div className="footer-section">
             <h4 className="footer-subtitle">Социальные сети</h4>
             <div className="footer-links">
-              <a href="#" className="footer-link">Instagram</a>
-              <a href="#" className="footer-link">Facebook</a>
-              <a href="#" className="footer-link">VK</a>
-              <a href="#" className="footer-link">Telegram</a>
+              <a href="https://t.me/andrey_918" className="footer-link">Instagram</a>
+              <a href="https://t.me/andrey_918" className="footer-link">Facebook</a>
+              <a href="https://t.me/andrey_918" className="footer-link">VK</a>
+              <a href="https://t.me/andrey_918" className="footer-link">Telegram</a>
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@ export function Footer() {
         <div className="footer-bottom">
           <div className="footer-bottom-content">
             <p className="footer-copyright">
-              © 2025 BETWEEN. Все права защищены
+              © 2025 Cafe. Все права защищены
             </p>
             <div className="footer-legal">
               <a href="#" className="footer-legal-link">Политика конфиденциальности</a>
