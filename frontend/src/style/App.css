@@ -13,6 +13,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* Header */
@@ -64,6 +65,104 @@
   color: var(--color-text-primary);
 }
 
+/* Mobile Navigation */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-toggle:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.nav-toggle-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-primary);
+}
+
+.nav {
+  display: flex;
+  gap: 48px;
+}
+
+.nav-menu.mobile {
+  position: fixed;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 768px;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
+}
+
+.nav-menu.mobile.open {
+  display: flex;
+}
+
+.nav-menu.mobile .nav-link {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 18px;
+}
+
+.nav-menu.mobile .nav-link:last-child {
+  border-bottom: none;
+}
+
+.nav-menu.mobile .logout-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  font-size: 18px;
+  padding: 12px 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.nav-menu.mobile .logout-btn:hover {
+  color: var(--color-text-primary);
+  transform: none;
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 16px;
+  }
+
+  .header-content {
+    padding: 16px 0;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+}
+
 /* Home */
 .home {
   min-height: 100vh;
@@ -105,6 +204,48 @@
   max-width: 896px;
   margin: 0 auto;
   animation: fadeIn 1s ease-out 0.6s both;
+}
+
+/* Responsive Hero */
+@media (max-width: 768px) {
+  .hero {
+    padding: 80px 16px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    margin-bottom: 48px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 60px 16px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .features {
+    gap: 24px;
+  }
 }
 
 .feature {
@@ -158,14 +299,21 @@
 }
 
 .recent-news .home-news-grid {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 32px;
-  justify-content: center;
+  max-width: 100%;
 }
 
-.recent-news .home-news-grid > * {
-  flex: 0 0 30%;
+@media (max-width: 768px) {
+  .recent-news, .popular-menu {
+    padding: 64px 16px;
+  }
+
+  .recent-news .home-news-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 .section-header {
@@ -211,6 +359,12 @@ footer {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  footer {
+    text-align: left;
+  }
 }
 
 .news h2, .location-contacts h2, .menu h2, .menu-item-detail h2 {
@@ -292,8 +446,9 @@ footer {
 }
 
 .admin {
-  margin-left:20px;
+  margin-left: 20px;
   width: auto;
+  padding: 20px;
 }
 
 .admin h2 {
@@ -312,6 +467,18 @@ footer {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .admin {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .admin-form {
+    padding: 16px;
+    max-width: 100%;
+  }
 }
 
 .admin-form h3 {
@@ -401,6 +568,12 @@ footer {
   gap: 15px;
 }
 
+@media (max-width: 768px) {
+  .admin-list {
+    gap: 12px;
+  }
+}
+
 .admin-item {
   background-color: var(--color-bg-secondary);
   padding: 15px;
@@ -475,6 +648,18 @@ footer {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .login {
+    padding: 20px 16px;
+    min-height: 70vh;
+  }
+
+  .login-form {
+    padding: 24px;
+    max-width: 100%;
+  }
 }
 
 .logout-btn {

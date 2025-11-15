@@ -23,6 +23,7 @@ const MenuItemDetail = () => {
       }
     };
     loadItem();
+    window.scrollTo(0, 0);
   }, [id]);
 
   if (loading) return <p>Загрузка...</p>;
