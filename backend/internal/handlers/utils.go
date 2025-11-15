@@ -13,8 +13,8 @@ import (
 
 func DeleteUploadedFiles(imageURLs []string) error {
 	for _, url := range imageURLs {
-		if strings.HasPrefix(url, "http://localhost:8080/uploads/") {
-			filename := strings.TrimPrefix(url, "http://localhost:8080/uploads/")
+		if strings.Contains(url, "/uploads/") {
+			filename := filepath.Base(url)
 			path := filepath.Join("uploads", filename)
 			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
 				return err
