@@ -15,7 +15,7 @@ func CreateMenuItem(item MenuItem) (int, error) {
 	query := `INSERT INTO menu (title, price, imageURLs, calories, description, category, createdAt, updatedAt) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
 	var id int
 	now := time.Now().UTC().Add(3 * time.Hour) // UTC+3 for Moscow
-	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Category, item.Calories, item.Description, now, now).Scan(&id)
+	err := database.Pool.QueryRow(context.Background(), query, item.Title, item.Price, item.ImageURLs, item.Calories, item.Description, item.Category, now, now).Scan(&id)
 	return id, err
 }
 

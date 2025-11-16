@@ -6,6 +6,7 @@ const AdminMenu = () => {
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -36,13 +37,17 @@ const AdminMenu = () => {
     try {
       if (editingItem) {
         await updateMenuItem(editingItem.id, formData);
+        setSuccess('Item updated successfully');
       } else {
         await createMenuItem(formData);
+        setSuccess('Item created successfully');
       }
       loadMenu();
       resetForm();
+      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       setError('Failed to save item');
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -62,9 +67,12 @@ const AdminMenu = () => {
     if (confirm('Are you sure you want to delete this item?')) {
       try {
         await deleteMenuItem(id);
+        setSuccess('Item deleted successfully');
         loadMenu();
+        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
         setError('Failed to delete item');
+        setTimeout(() => setError(null), 5000);
       }
     }
   };
@@ -103,11 +111,12 @@ const AdminMenu = () => {
       <section className="admin">
         <h2>Admin - Menu Management</h2>
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
 
         <form onSubmit={handleSubmit} className="admin-form">
           <h3>{editingItem ? 'Edit Item' : 'Add New Item'}</h3>
           <div className="form-group">
-            <label>Title:</label>
+            <label>Title: <span className="required">*</span></label>
             <input
               type="text"
               value={formData.title}
@@ -116,7 +125,7 @@ const AdminMenu = () => {
             />
           </div>
           <div className="form-group">
-            <label>Price:</label>
+            <label>Price: <span className="required">*</span></label>
             <input
               type="text"
               value={formData.price}
@@ -131,6 +140,7 @@ const AdminMenu = () => {
                 {typeof url === 'string' ? (
                   <>
                     <input
+                      key={`url-${index}`}
                       type="url"
                       value={url}
                       onChange={(e) => updateImageURL(index, e.target.value)}
@@ -145,6 +155,7 @@ const AdminMenu = () => {
                 ) : (
                   <>
                     <input
+                      key={`file-${index}`}
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
@@ -174,7 +185,7 @@ const AdminMenu = () => {
             />
           </div>
           <div className="form-group">
-            <label>Category:</label>
+            <label>Category: <span className="required">*</span></label>
             <input
               type="text"
               value={formData.category}

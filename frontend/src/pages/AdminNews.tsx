@@ -6,6 +6,7 @@ const AdminNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
   const getMoscowTimeString = () => {
     const now = new Date();
@@ -54,13 +55,17 @@ const AdminNews = () => {
     try {
       if (editingItem) {
         await updateNewsItem(editingItem.id, dataToSend);
+        setSuccess('News item updated successfully');
       } else {
         await createNewsItem(dataToSend);
+        setSuccess('News item created successfully');
       }
       loadNews();
       resetForm();
+      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       setError('Failed to save item');
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -83,9 +88,12 @@ const AdminNews = () => {
     if (confirm('Are you sure you want to delete this item?')) {
       try {
         await deleteNewsItem(id);
+        setSuccess('News item deleted successfully');
         loadNews();
+        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
         setError('Failed to delete item');
+        setTimeout(() => setError(null), 5000);
       }
     }
   };
@@ -123,11 +131,12 @@ const AdminNews = () => {
       <section className="admin">
         <h2>Admin - News Management</h2>
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
 
         <form onSubmit={handleSubmit} className="admin-form">
           <h3>{editingItem ? 'Edit Item' : 'Add New Item'}</h3>
           <div className="form-group">
-            <label>Title:</label>
+            <label>Title: <span className="required">*</span></label>
             <input
               type="text"
               value={formData.title}
@@ -172,6 +181,7 @@ const AdminNews = () => {
                 {typeof url === 'string' ? (
                   <>
                     <input
+                      key={`url-${index}`}
                       type="url"
                       value={url}
                       onChange={(e) => updateImageURL(index, e.target.value)}
@@ -186,6 +196,7 @@ const AdminNews = () => {
                 ) : (
                   <>
                     <input
+                      key={`file-${index}`}
                       type="file"
                       accept="image/*"
                       onChange={(e) => {

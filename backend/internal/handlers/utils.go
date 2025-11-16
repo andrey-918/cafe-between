@@ -44,6 +44,11 @@ func SaveUploadedFiles(files []*multipart.FileHeader) ([]string, error) {
 			return nil, fmt.Errorf("file too large: %d bytes", fileHeader.Size)
 		}
 
+		// Ensure uploads directory exists
+		if err := os.MkdirAll("uploads", 0755); err != nil {
+			return nil, fmt.Errorf("failed to create uploads directory: %v", err)
+		}
+
 		// Generate unique filename
 		ext := filepath.Ext(fileHeader.Filename)
 		filename := uuid.New().String() + ext
