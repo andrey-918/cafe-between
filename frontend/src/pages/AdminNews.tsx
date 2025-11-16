@@ -4,10 +4,17 @@ import { fetchNews, createNewsItem, updateNewsItem, deleteNewsItem } from '../ap
 
 const AdminNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+
   const getMoscowTimeString = () => {
     const now = new Date();
     const moscowOffset = 3 * 60 * 60 * 1000; // 3 hours in ms
@@ -27,8 +34,13 @@ const AdminNews = () => {
     loadNews();
   }, []);
 
+  useEffect(() => {
+    filterNews();
+  }, [news, searchTerm]);
+
   const loadNews = async () => {
     try {
+      setLoading(true);
       const data = await fetchNews();
       setNews(data);
     } catch (err) {
@@ -38,8 +50,41 @@ const AdminNews = () => {
     }
   };
 
+  const filterNews = () => {
+    let filtered = news;
+
+    if (searchTerm) {
+      filtered = filtered.filter(item =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.preview?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredNews(filtered);
+  };
+
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {};
+
+    if (!formData.title.trim()) errors.title = 'Title is required';
+    if (!formData.description.trim()) errors.description = 'Description is required';
+    if (formData.preview.length > 50) errors.preview = 'Preview too long';
+    if (formData.description.length > 250) errors.description = 'Description too long';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      setError('Please fix the form errors');
+      return;
+    }
+
+    setSubmitting(true);
     let postedAt: string;
     if (formData.postedAt) {
       // Convert the input (which is in local time, but we treat as Moscow) to UTC
@@ -62,10 +107,13 @@ const AdminNews = () => {
       }
       loadNews();
       resetForm();
+      setShowForm(false);
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       setError('Failed to save item');
       setTimeout(() => setError(null), 5000);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -82,10 +130,12 @@ const AdminNews = () => {
       imageURLs: item.imageURLs || [],
       postedAt: postedAtString,
     });
+    setShowForm(true);
+    setFormErrors({});
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this item?')) {
+    if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       try {
         await deleteNewsItem(id);
         setSuccess('News item deleted successfully');
@@ -98,6 +148,39 @@ const AdminNews = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedItems.length === 0) return;
+
+    if (window.confirm(`Are you sure you want to delete ${selectedItems.length} items? This action cannot be undone.`)) {
+      try {
+        await Promise.all(selectedItems.map(id => deleteNewsItem(id)));
+        setSuccess(`${selectedItems.length} items deleted successfully`);
+        setSelectedItems([]);
+        loadNews();
+        setTimeout(() => setSuccess(null), 5000);
+      } catch (err) {
+        setError('Failed to delete some items');
+        setTimeout(() => setError(null), 5000);
+      }
+    }
+  };
+
+  const toggleItemSelection = (id: number) => {
+    setSelectedItems(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const selectAllItems = () => {
+    setSelectedItems(filteredNews.map(item => item.id));
+  };
+
+  const clearSelection = () => {
+    setSelectedItems([]);
+  };
+
   const resetForm = () => {
     setEditingItem(null);
     setFormData({
@@ -107,6 +190,7 @@ const AdminNews = () => {
       imageURLs: [],
       postedAt: getMoscowTimeString(),
     });
+    setFormErrors({});
   };
 
   const addImageURL = () => {
@@ -129,118 +213,248 @@ const AdminNews = () => {
   return (
     <main>
       <section className="admin">
-        <h2>Admin - News Management</h2>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
+        <div className="admin-header">
+          <h2>Admin - News Management</h2>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn-primary"
+          >
+            {showForm ? 'Hide Form' : '+ Add New Article'}
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="admin-form">
-          <h3>{editingItem ? 'Edit Item' : 'Add New Item'}</h3>
-          <div className="form-group">
-            <label>Title: <span className="required">*</span></label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Preview:</label>
-            <textarea
-              value={formData.preview}
-              onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 50) })}
-              maxLength={50}
-              rows={2}
-              style={{ resize: 'vertical', minHeight: '40px', maxHeight: '80px' }}
-            />
-            <small>{formData.preview.length}/50 characters</small>
-          </div>
-          <div className="form-group">
-            <label>Description:</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
-              maxLength={250}
-              rows={4}
-              style={{ resize: 'vertical', minHeight: '80px', maxHeight: '160px' }}
-            />
-            <small>{formData.description.length}/250 characters</small>
-          </div>
-          <div className="form-group">
-            <label>Posted At (Moscow time):</label>
-            <input
-              type="datetime-local"
-              value={formData.postedAt}
-              onChange={(e) => setFormData({ ...formData, postedAt: e.target.value })}
-            />
-          </div>
-          <div className="form-group">
-            <label>Images:</label>
-            {formData.imageURLs.map((url, index) => (
-              <div key={index} className="image-url-group">
-                {typeof url === 'string' ? (
-                  <>
-                    <input
-                      key={`url-${index}`}
-                      type="url"
-                      value={url}
-                      onChange={(e) => updateImageURL(index, e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                    {url && (
-                      <div className="image-preview">
-                        <img src={url} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <input
-                      key={`file-${index}`}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) updateImageURL(index, file);
-                      }}
-                    />
-                    <div className="image-preview">
-                      <img src={URL.createObjectURL(url)} alt={`Preview ${index + 1}`} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+        {error && <div className="alert alert-error">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+
+        {showForm && (
+          <form onSubmit={handleSubmit} className="admin-form">
+            <div className="form-header">
+              <h3>{editingItem ? 'Edit Article' : 'Add New Article'}</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  resetForm();
+                  setShowForm(false);
+                }}
+                className="btn-close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="form-content">
+              <div className="form-grid">
+              <div className="form-group">
+                <label>Title: <span className="required">*</span></label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className={formErrors.title ? 'error' : ''}
+                  placeholder="Enter article title"
+                />
+                {formErrors.title && <span className="field-error">{formErrors.title}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Posted At (Moscow time):</label>
+                <input
+                  type="datetime-local"
+                  value={formData.postedAt}
+                  onChange={(e) => setFormData({ ...formData, postedAt: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>Preview:</label>
+                <textarea
+                  value={formData.preview}
+                  onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 50) })}
+                  maxLength={50}
+                  rows={2}
+                  placeholder="Short preview text (optional)"
+                  className={formErrors.preview ? 'error' : ''}
+                />
+                <div className="char-count">
+                  <span>{formData.preview.length}/50 characters</span>
+                </div>
+                {formErrors.preview && <span className="field-error">{formErrors.preview}</span>}
+              </div>
+
+              <div className="form-group full-width">
+                <label>Description: <span className="required">*</span></label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
+                  maxLength={250}
+                  rows={4}
+                  placeholder="Full article content"
+                  className={formErrors.description ? 'error' : ''}
+                />
+                <div className="char-count">
+                  <span>{formData.description.length}/250 characters</span>
+                </div>
+                {formErrors.description && <span className="field-error">{formErrors.description}</span>}
+              </div>
+
+              <div className="form-group full-width">
+                <label>Images:</label>
+                <div className="image-manager">
+                  {formData.imageURLs.map((url, index) => (
+                    <div key={index} className="image-input-group">
+                      {typeof url === 'string' ? (
+                        <div className="image-url-input">
+                          <input
+                            type="url"
+                            value={url}
+                            onChange={(e) => updateImageURL(index, e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                          />
+                          {url && (
+                            <div className="image-preview">
+                              <img src={url} alt={`Preview ${index + 1}`} />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="image-file-input">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) updateImageURL(index, file);
+                            }}
+                          />
+                          <div className="image-preview">
+                            <img src={URL.createObjectURL(url)} alt={`Preview ${index + 1}`} />
+                          </div>
+                        </div>
+                      )}
+                      {formData.imageURLs.length > 1 && (
+                        <button type="button" onClick={() => removeImageURL(index)} className="btn-remove">
+                          ×
+                        </button>
+                      )}
                     </div>
-                  </>
-                )}
-                {formData.imageURLs.length > 1 && (
-                  <button type="button" onClick={() => removeImageURL(index)}>Remove</button>
-                )}
+                  ))}
+                  <div className="image-actions">
+                    <button type="button" onClick={addImageURL} className="btn-secondary">
+                      + Add Image URL
+                    </button>
+                    <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })} className="btn-secondary">
+                      + Upload File
+                    </button>
+                  </div>
+                </div>
               </div>
-            ))}
-            <button type="button" onClick={addImageURL}>Add Image URL</button>
-            <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })}>Add File</button>
-          </div>
-          <div className="form-actions">
-            <button type="submit">{editingItem ? 'Update' : 'Create'}</button>
-            {editingItem && <button type="button" onClick={resetForm}>Cancel</button>}
-          </div>
-        </form>
+              </div>
 
-        <h3>Existing Items</h3>
-        {loading ? <p>Loading...</p> : (
-          <div className="admin-list">
-            {news.map((item) => (
-              <div key={item.id} className="admin-item">
-                <div className="item-info">
-                  <h4>{item.title}</h4>
-                  <p>{item.description}</p>
-                  <small>Posted At: {new Date(item.postedAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}</small>
-                </div>
-                <div className="item-actions">
-                  <button onClick={() => handleEdit(item)}>Edit</button>
-                  <button onClick={() => handleDelete(item.id)}>Delete</button>
-                </div>
+              <div className="form-actions">
+                <button type="submit" disabled={submitting} className="btn-primary">
+                  {submitting ? 'Saving...' : (editingItem ? 'Update Article' : 'Create Article')}
+                </button>
+                <button type="button" onClick={() => { resetForm(); setShowForm(false); }} className="btn-secondary">
+                  Cancel
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          </form>
         )}
+
+        <div className="items-section">
+          <div className="items-header">
+            <h3>News Articles ({filteredNews.length})</h3>
+            <div className="items-controls">
+              <div className="search-filter">
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              {selectedItems.length > 0 && (
+                <div className="bulk-actions">
+                  <span>{selectedItems.length} selected</span>
+                  <button onClick={handleBulkDelete} className="btn-danger">
+                    Delete Selected
+                  </button>
+                  <button onClick={clearSelection} className="btn-secondary">
+                    Clear
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="loading-state">
+              <div className="spinner"></div>
+              <p>Loading news articles...</p>
+            </div>
+          ) : filteredNews.length === 0 ? (
+            <div className="empty-state">
+              <p>No articles found. {searchTerm ? 'Try adjusting your search.' : 'Add your first news article above.'}</p>
+            </div>
+          ) : (
+            <div className="admin-list">
+              <div className="list-header">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.length === filteredNews.length && filteredNews.length > 0}
+                  onChange={selectedItems.length === filteredNews.length ? clearSelection : selectAllItems}
+                />
+                <span>Article</span>
+                <span>Posted</span>
+                <span>Actions</span>
+              </div>
+              {filteredNews.map((item) => (
+                <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'selected' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(item.id)}
+                    onChange={() => toggleItemSelection(item.id)}
+                  />
+                  <div className="item-info">
+                    <div className="item-main">
+                      {item.imageURLs && item.imageURLs.length > 0 && (
+                        <div className="item-thumbnail">
+                          <img
+                            src={typeof item.imageURLs[0] === 'string' ? item.imageURLs[0] : URL.createObjectURL(item.imageURLs[0])}
+                            alt={item.title}
+                          />
+                        </div>
+                      )}
+                      <div className="item-details">
+                        <h4>{item.title}</h4>
+                        <p className="item-description">{item.preview || item.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="item-date">
+                    {new Date(item.postedAt).toLocaleDateString('ru-RU', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                  <div className="item-actions">
+                    <button onClick={() => handleEdit(item)} className="btn-edit">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(item.id)} className="btn-delete">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </main>
   );

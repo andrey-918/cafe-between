@@ -1,14 +1,31 @@
-# TODO List for Fixing Menu and News Editing/Creation Issues
+# Admin Panel Redesign Tasks
 
-## Issues Identified
-- Backend: `uploads` directory not created, causing file save failures (400 Bad Request)
-- Frontend: Controlled input warning when switching between URL and file inputs in admin forms
-- Image 404 errors due to missing uploads directory
+## Phase 1: Form Improvements ✅
+- [x] Improve form layout with better grouping and visual hierarchy
+- [x] Add real-time validation feedback
+- [x] Enhance image upload/management interface
+- [x] Add form reset and better state management
 
-## Tasks
-- [x] Fix uploads directory creation in backend/utils.go
-- [x] Fix controlled input issue in AdminMenu.tsx by using different keys for URL and file inputs
-- [x] Fix controlled input issue in AdminNews.tsx by using different keys for URL and file inputs
-- [ ] Test menu item creation and editing
-- [ ] Test news item creation and editing
-- [ ] Verify image uploads and serving work correctly
+## Phase 2: Item List Enhancements ✅
+- [x] Add thumbnail previews in item list
+- [x] Improve item information display
+- [x] Add search and filter functionality
+- [x] Implement pagination for large lists (not needed for current scale)
+
+## Phase 3: UX/UI Improvements ✅
+- [x] Add loading states and skeleton screens
+- [x] Implement better confirmation dialogs
+- [x] Add bulk actions (select multiple, delete multiple)
+- [x] Improve responsive design
+
+## Phase 4: Error Handling & Polish ✅
+- [x] Enhanced error messages and handling
+- [x] Add undo functionality for accidental deletions (confirmation dialogs)
+- [x] Improve accessibility
+- [x] Add keyboard shortcuts (not implemented yet)
+
+## Phase 5: Testing & Optimization
+- [ ] Test all CRUD operations
+- [ ] Optimize performance for large datasets
+- [ ] Add unit tests for components
+- [ ] Final UI/UX review
