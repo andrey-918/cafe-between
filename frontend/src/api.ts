@@ -1,6 +1,6 @@
 import type { MenuItem, NewsItem, MenuCategory } from './types';
 
-const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
+export const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
 
 export const getImageUrl = (imagePath: string): string => {
   if (imagePath.startsWith('http')) {

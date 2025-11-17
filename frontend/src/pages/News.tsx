@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem } from '../types';
-import { fetchNews } from '../api';
+import { API_BASE_URL, fetchNews } from '../api';
 
 import '../style/news.css';
 
@@ -47,7 +47,7 @@ const News = () => {
           const getImageSrc = (img: string | File) => {
             if (typeof img === 'string') {
               if (img.startsWith('/uploads/')) {
-                return `https://localhost${img}`;
+                return `${API_BASE_URL}${img}`;
               }
               return img;
             }

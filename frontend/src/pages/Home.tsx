@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { NewsItem, MenuItem } from '../types';
 import { fetchNews, fetchMenu } from '../api';
 import { MenuItemCard } from '../components/MenuItemCard';
+import { API_BASE_URL } from '../api'
 
 
 const Home = () => {
@@ -83,7 +84,7 @@ const Home = () => {
             const getImageSrc = (img: string | File) => {
               if (typeof img === 'string') {
                 if (img.startsWith('/uploads/')) {
-                  return `https://localhost${img}`;
+                  return `${API_BASE_URL}${img}`;
                 }
                 return img;
               }
