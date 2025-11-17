@@ -42,7 +42,8 @@ const AdminNews = () => {
     try {
       setLoading(true);
       const data = await fetchNews();
-      setNews(data);
+      const newsArray = Array.isArray(data) ? data : [];
+      setNews(newsArray);
     } catch (err) {
       setError('Failed to load news');
     } finally {

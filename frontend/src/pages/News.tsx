@@ -18,8 +18,9 @@ const News = () => {
     const loadNews = async () => {
       try {
         const newsData = await fetchNews();
+        const newsArray = Array.isArray(newsData) ? newsData : [];
         const now = new Date();
-        const visibleNews = newsData.filter(item => new Date(item.postedAt) <= now);
+        const visibleNews = newsArray.filter(item => new Date(item.postedAt) <= now);
         setNews(visibleNews);
       } catch (err) {
         setError('Failed to load news');

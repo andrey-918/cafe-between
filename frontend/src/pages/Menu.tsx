@@ -75,7 +75,7 @@ const Menu = () => {
               {loading && <p>Загрузка...</p>}
               {error && <p>{error}</p>}
               <div className="menu-grid">
-                {groupedMenu[category]?.map((item) => (
+                {groupedMenu[category] && groupedMenu[category].map((item) => (
                   <MenuItemCard
                     key={item.id}
                     id={item.id}

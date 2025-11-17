@@ -69,8 +69,11 @@ const AdminMenu = () => {
   });
 
   useEffect(() => {
-    loadMenu();
-    loadCategories();
+    const loadData = async () => {
+      await loadMenu();
+      await loadCategories();
+    };
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -81,7 +84,8 @@ const AdminMenu = () => {
     try {
       setLoading(true);
       const data = await fetchMenu();
-      setMenu(data);
+      const menuArray = Array.isArray(data) ? data : [];
+      setMenu(menuArray);
     } catch (err) {
       setError('Failed to load menu');
     } finally {
@@ -92,7 +96,8 @@ const AdminMenu = () => {
   const loadCategories = async () => {
     try {
       const data = await fetchMenuCategories();
-      setCategories(data);
+      const categoriesArray = Array.isArray(data) ? data : [];
+      setCategories(categoriesArray);
     } catch (err) {
       setError('Failed to load categories');
     }
