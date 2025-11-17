@@ -31,26 +31,28 @@ const Menu = () => {
   }, []);
 
   // Create category display names from fetched categories
-  const categoryNames: Record<string, string> = categories.reduce((acc, cat) => {
+  const categoryNames: Record<string, string> = categories ? categories.reduce((acc, cat) => {
     acc[cat.name_en] = cat.name_ru;
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, string>) : {};
 
   // Group menu items by category
-  const groupedMenu = menu.reduce((acc, item) => {
+  const groupedMenu = menu ? menu.reduce((acc, item) => {
     const category = item.category || 'Без категории';
     if (!acc[category]) {
       acc[category] = [];
     }
     acc[category].push(item);
     return acc;
-  }, {} as Record<string, MenuItem[]>);
+  }, {} as Record<string, MenuItem[]>) : {};
 
   // Sort categories by sort_order from fetched categories
   const sortedCategories = categories
-    .filter(cat => groupedMenu[cat.name_en] && groupedMenu[cat.name_en].length > 0)
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map(cat => cat.name_en);
+    ? categories
+        .filter(cat => groupedMenu[cat.name_en] && groupedMenu[cat.name_en].length > 0)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(cat => cat.name_en)
+    : [];
 
   return (
     <div className="menu">
