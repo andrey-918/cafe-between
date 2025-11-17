@@ -169,7 +169,7 @@ const AdminMenu = () => {
     setFormData({
       title: item.title,
       price: item.price,
-      imageURLs: item.imageURLs || [],
+      imageURLs: (item.imageURLs || []).map(url => typeof url === 'string' ? getImageUrl(url) : url),
       calories: item.calories || 0,
       description: item.description || '',
       category: item.category || '',

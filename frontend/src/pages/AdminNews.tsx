@@ -128,7 +128,7 @@ const AdminNews = () => {
       title: item.title,
       preview: item.preview || '',
       description: item.description || '',
-      imageURLs: item.imageURLs || [],
+      imageURLs: (item.imageURLs || []).map(url => typeof url === 'string' ? getImageUrl(url) : url),
       postedAt: postedAtString,
     });
     setShowForm(true);
