@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { MenuItem, MenuCategory } from '../types';
-import { fetchMenuItem, fetchMenuCategories } from '../api';
+import { fetchMenuItem, fetchMenuCategories, getImageUrl } from '../api';
 import '../style/menu-detail.css';
 
 const MenuItemDetail = () => {
@@ -72,10 +72,7 @@ const MenuItemDetail = () => {
             {item.imageURLs.map((url, index) => {
               const getImageSrc = (img: string | File) => {
                 if (typeof img === 'string') {
-                  if (img.startsWith('/uploads/')) {
-                    return `https://localhost${img}`;
-                  }
-                  return img;
+                  return getImageUrl(img);
                 }
                 return URL.createObjectURL(img);
               };

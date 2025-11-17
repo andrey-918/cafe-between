@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { NewsItem } from '../types';
-import { fetchNewsItem } from '../api';
+import { fetchNewsItem, getImageUrl } from '../api';
 import '../style/news-detail.css';
 
 const NewsItemDetail = () => {
@@ -60,10 +60,7 @@ const NewsItemDetail = () => {
             {item.imageURLs.map((url, index) => {
               const getImageSrc = (img: string | File) => {
                 if (typeof img === 'string') {
-                  if (img.startsWith('/uploads/')) {
-                    return `https://localhost${img}`;
-                  }
-                  return img;
+                  return getImageUrl(img);
                 }
                 return URL.createObjectURL(img);
               };

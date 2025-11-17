@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ImageWithFallback } from './ImageWithFallback';
+import { getImageUrl } from '../api';
 
 interface MenuItemCardProps {
   id: number;
@@ -28,10 +29,7 @@ export function MenuItemCard({
 }: MenuItemCardProps) {
   const getImageSrc = (img: string | File) => {
     if (typeof img === 'string') {
-      if (img.startsWith('/uploads/')) {
-        return `https://localhost${img}`;
-      }
-      return img;
+      return getImageUrl(img);
     }
     return URL.createObjectURL(img);
   };

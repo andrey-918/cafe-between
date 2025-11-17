@@ -2,6 +2,13 @@ import type { MenuItem, NewsItem, MenuCategory } from './types';
 
 const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
 
+export const getImageUrl = (imagePath: string): string => {
+  if (imagePath.startsWith('http')) {
+    return imagePath;
+  }
+  return `${window.location.protocol}//${window.location.host}/uploads/${imagePath}`;
+};
+
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('token');
   const headers: Record<string, string> = {};
