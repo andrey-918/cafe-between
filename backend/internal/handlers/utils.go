@@ -67,7 +67,7 @@ func SaveUploadedFiles(files []*multipart.FileHeader) ([]string, error) {
 			return nil, err
 		}
 
-		paths = append(paths, "http://localhost:8080/uploads/"+filename)
+		paths = append(paths, "https://localhost/uploads/"+filename)
 	}
 	return paths, nil
 }

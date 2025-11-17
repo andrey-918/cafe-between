@@ -29,3 +29,9 @@ data.txt
 
 info/
 uploads/
+
+# Docker
+docker-compose.override.yml
+
+# Database
+postgres_data/

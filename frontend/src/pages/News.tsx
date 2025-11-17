@@ -46,7 +46,7 @@ const News = () => {
           const getImageSrc = (img: string | File) => {
             if (typeof img === 'string') {
               if (img.startsWith('/uploads/')) {
-                return `http://localhost:8080${img}`;
+                return `https://localhost${img}`;
               }
               return img;
             }
