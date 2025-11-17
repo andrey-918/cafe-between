@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (password: string): Promise<boolean> => {
     try {
-      const response = await fetch('https://localhost/api/login', {
+      const response = await fetch(`${window.location.protocol}//${window.location.host}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       localStorage.removeItem('token');
-      await fetch('https://localhost/api/logout', {
+      await fetch(`${window.location.protocol}//${window.location.host}/api/logout`, {
         method: 'POST',
       });
     } finally {
