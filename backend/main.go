@@ -57,7 +57,7 @@ func main() {
 	r.HandleFunc("/api/logout", handlers.LogoutHandler).Methods("POST", "OPTIONS")
 
 	// Serve static files from uploads directory
-	r.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
+	r.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("/root/uploads/"))))
 
 	adminRouter := r.PathPrefix("/api/admin").Subrouter()
 	adminRouter.Use(handlers.JWTMiddleware)
