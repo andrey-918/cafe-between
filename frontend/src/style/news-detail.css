@@ -1,9 +1,10 @@
 /* News Detail Page Styles */
 
 .news-detail-container {
+  padding-top: 90px;
   max-width: 80rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding-bottom: 40px;
 }
 
 .news-detail-header {
