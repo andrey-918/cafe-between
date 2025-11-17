@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: cafe-between-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cafe_between
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password_here
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - cafe-between-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cafe-between-backend
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DSN=postgres://postgres:your_password_here@db:5432/cafe_between?sslmode=disable
+      - PORT=8080
+    depends_on:
+      - db
+    volumes:
+      - ./backend/uploads:/root/uploads
+    ports:
+      - "8080:8080"
+    networks:
+      - cafe-between-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cafe-between-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - cafe-between-network
+
+volumes:
+  postgres_data:
+
+networks:
+  cafe-between-network:
+    driver: bridge
