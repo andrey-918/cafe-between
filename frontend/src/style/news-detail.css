@@ -131,6 +131,7 @@
 
 @media (max-width: 768px) {
   .news-detail-container {
+    padding-top: 80px;
     padding: 1rem 1rem;
   }
 
