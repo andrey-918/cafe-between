@@ -25,9 +25,11 @@ WORKDIR /root/
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
 
-# Copy migrations and uploads directory
+# Copy migrations directory
 COPY --from=builder /app/migrations ./migrations
-COPY --from=builder /app/uploads ./uploads
+
+# Create uploads directory (will be mounted as volume)
+RUN mkdir -p /root/uploads
 
 # Expose port
 EXPOSE 8080

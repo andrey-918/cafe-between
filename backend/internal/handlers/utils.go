@@ -15,7 +15,7 @@ func DeleteUploadedFiles(imageURLs []string) error {
 	for _, url := range imageURLs {
 		if strings.Contains(url, "/uploads/") {
 			filename := filepath.Base(url)
-			path := filepath.Join("uploads", filename)
+			path := filepath.Join("/root/uploads", filename)
 			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
 				return err
 			}
@@ -45,14 +45,14 @@ func SaveUploadedFiles(files []*multipart.FileHeader) ([]string, error) {
 		}
 
 		// Ensure uploads directory exists
-		if err := os.MkdirAll("uploads", 0755); err != nil {
+		if err := os.MkdirAll("/root/uploads", 0755); err != nil {
 			return nil, fmt.Errorf("failed to create uploads directory: %v", err)
 		}
 
 		// Generate unique filename
 		ext := filepath.Ext(fileHeader.Filename)
 		filename := uuid.New().String() + ext
-		path := filepath.Join("uploads", filename)
+		path := filepath.Join("/root/uploads", filename)
 
 		// Create destination file
 		dst, err := os.Create(path)
