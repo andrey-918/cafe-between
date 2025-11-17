@@ -76,7 +76,18 @@ export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'cr
   formData.append('calories', (item.calories || 0).toString());
   formData.append('description', item.description || '');
   formData.append('category', item.category);
-  const existingImages = item.imageURLs.filter(url => typeof url === 'string') as string[];
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string').map(url => {
+    if (url.startsWith('http')) {
+      const base = `${window.location.protocol}//${window.location.host}/uploads/`;
+      if (url.startsWith(base)) {
+        return url.replace(base, '');
+      } else {
+        return url; // external URL, keep as is
+      }
+    } else {
+      return url;
+    }
+  }) as string[];
   formData.append('existingImages', JSON.stringify(existingImages));
   item.imageURLs.forEach((file) => {
     if (file instanceof File) {
@@ -149,7 +160,18 @@ export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'cr
   formData.append('preview', item.preview || '');
   formData.append('description', item.description || '');
   formData.append('postedAt', item.postedAt);
-  const existingImages = item.imageURLs.filter(url => typeof url === 'string') as string[];
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string').map(url => {
+    if (url.startsWith('http')) {
+      const base = `${window.location.protocol}//${window.location.host}/uploads/`;
+      if (url.startsWith(base)) {
+        return url.replace(base, '');
+      } else {
+        return url; // external URL, keep as is
+      }
+    } else {
+      return url;
+    }
+  }) as string[];
   formData.append('existingImages', JSON.stringify(existingImages));
   item.imageURLs.forEach((file) => {
     if (file instanceof File) {
