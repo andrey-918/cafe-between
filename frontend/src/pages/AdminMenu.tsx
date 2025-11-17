@@ -172,7 +172,7 @@ const AdminMenu = () => {
       imageURLs: (item.imageURLs || []).map(url => typeof url === 'string' ? getImageUrl(url) : url),
       calories: item.calories || 0,
       description: item.description || '',
-      category: item.category || '',
+      category: categories.find(cat => cat.name_en === item.category)?.name_ru || item.category || '',
     });
     setShowForm(true);
     setFormErrors({});
