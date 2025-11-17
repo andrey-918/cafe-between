@@ -30,8 +30,6 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     depends_on:
       - db
-    volumes:
-      - ./backend/uploads:/root/uploads
     ports:
       - "${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}"
     networks:
