@@ -196,31 +196,30 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	imagePaths = append(existingImages, imagePaths...)
 
-	// Get current item to delete removed images
-	// currentItem, err := models.GetMenuItemByID(id)
-	// if err != nil {
-	// 	if errors.Is(err, models.ErrMenuItemNotFound) {
-	// 		http.Error(w, "Menu item not found", http.StatusNotFound)
-	// 	} else {
-	// 		http.Error(w, "Failed to fetch menu item", http.StatusInternalServerError)
-	// 	}
-	// 	return
-	// }
+	currentItem, err := models.GetMenuItemByID(id)
+	if err != nil {
+		if errors.Is(err, models.ErrMenuItemNotFound) {
+			http.Error(w, "Menu item not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Failed to fetch menu item", http.StatusInternalServerError)
+		}
+		return
+	}
 
 	// Find images to delete (those in current but not in new list)
 	var imagesToDelete []string
-	// for _, currentURL := range currentItem.ImageURLs {
-	// 	found := false
-	// 	for _, newURL := range imagePaths {
-	// 		if currentURL == newURL {
-	// 			found = true
-	// 			break
-	// 		}
-	// 	}
-	// 	if !found {
-	// 		imagesToDelete = append(imagesToDelete, currentURL)
-	// 	}
-	// }
+	for _, currentURL := range currentItem.ImageURLs {
+		found := false
+		for _, newURL := range imagePaths {
+			if currentURL == newURL {
+				found = true
+				break
+			}
+		}
+		if !found {
+			imagesToDelete = append(imagesToDelete, currentURL)
+		}
+	}
 
 	// Delete removed images
 	if err := DeleteUploadedFiles(imagesToDelete); err != nil {
