@@ -5,7 +5,6 @@
 # Docker
 Dockerfile
 .dockerignore
-nginx.conf
 
 # Node modules
 node_modules
