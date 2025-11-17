@@ -77,7 +77,16 @@ export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'cr
   formData.append('description', item.description || '');
   formData.append('category', item.category);
   const existingImages = item.imageURLs.filter(url => typeof url === 'string').map(url => {
-    return url;
+    if (url.startsWith('http')) {
+      const base = `${window.location.protocol}//${window.location.host}/uploads/`;
+      if (url.startsWith(base)) {
+        return url.replace(base, '/uploads/');
+      } else {
+        return url; // external URL, keep as is
+      }
+    } else {
+      return url;
+    }
   }) as string[];
   formData.append('existingImages', JSON.stringify(existingImages));
   item.imageURLs.forEach((file) => {

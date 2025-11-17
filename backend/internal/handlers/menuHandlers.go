@@ -209,18 +209,18 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Find images to delete (those in current but not in new list)
 	var imagesToDelete []string
-	for _, currentURL := range currentItem.ImageURLs {
-		found := false
-		for _, newURL := range imagePaths {
-			if currentURL == newURL {
-				found = true
-				break
-			}
-		}
-		if !found {
-			imagesToDelete = append(imagesToDelete, currentURL)
-		}
-	}
+	// for _, currentURL := range currentItem.ImageURLs {
+	// 	found := false
+	// 	for _, newURL := range imagePaths {
+	// 		if currentURL == newURL {
+	// 			found = true
+	// 			break
+	// 		}
+	// 	}
+	// 	if !found {
+	// 		imagesToDelete = append(imagesToDelete, currentURL)
+	// 	}
+	// }
 
 	// Delete removed images
 	if err := DeleteUploadedFiles(imagesToDelete); err != nil {
