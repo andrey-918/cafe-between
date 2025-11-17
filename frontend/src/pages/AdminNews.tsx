@@ -132,6 +132,7 @@ const AdminNews = () => {
     });
     setShowForm(true);
     setFormErrors({});
+    window.scrollTo(0, 0);
   };
 
   const handleDelete = async (id: number) => {

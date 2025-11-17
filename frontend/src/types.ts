@@ -10,6 +10,14 @@ export interface MenuItem {
   updatedAt: string;
 }
 
+export interface MenuCategory {
+  id: number;
+  name_ru: string;
+  name_en: string;
+  sort_order: number;
+  createdAt: string;
+}
+
 export interface NewsItem {
   id: number;
   title: string;

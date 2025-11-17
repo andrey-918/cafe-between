@@ -21,7 +21,7 @@ func CreateMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 	priceStr := r.FormValue("price")
 	caloriesStr := r.FormValue("calories")
 	description := r.FormValue("description")
-	category := r.FormValue("category")
+	categoryRu := r.FormValue("category")
 
 	files := r.MultipartForm.File["images"]
 	imagePaths, err := SaveUploadedFiles(files)
@@ -41,13 +41,25 @@ func CreateMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 		calories = 0
 	}
 
+	// Create or get category
+	categoryEn := transliterate(categoryRu)
+	if categoryRu == "" {
+		http.Error(w, "Category is required", http.StatusBadRequest)
+		return
+	}
+	_, err = models.CreateMenuCategory(categoryRu, categoryEn)
+	if err != nil {
+		http.Error(w, "Failed to create category", http.StatusInternalServerError)
+		return
+	}
+
 	item := models.MenuItem{
 		Title:       title,
 		Price:       int(price),
 		ImageURLs:   imagePaths,
 		Calories:    calories,
 		Description: description,
-		Category:    category,
+		Category:    categoryEn, // Store English translit in menu table
 	}
 
 	id, err := models.CreateMenuItem(item)
@@ -132,6 +144,15 @@ func DelMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	// Delete unused category
+	err = models.DeleteUnusedMenuCategory(item.Category)
+	if err != nil {
+		// Log error but don't fail the request
+		// http.Error(w, "Failed to delete unused category", http.StatusInternalServerError)
+		// return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -154,7 +175,7 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 	priceStr := r.FormValue("price")
 	caloriesStr := r.FormValue("calories")
 	description := r.FormValue("description")
-	category := r.FormValue("category")
+	categoryRu := r.FormValue("category")
 
 	files := r.MultipartForm.File["images"]
 	imagePaths, err := SaveUploadedFiles(files)
@@ -218,13 +239,25 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 		calories = 0
 	}
 
+	// Create or get category
+	categoryEn := transliterate(categoryRu)
+	if categoryRu == "" {
+		http.Error(w, "Category is required", http.StatusBadRequest)
+		return
+	}
+	_, err = models.CreateMenuCategory(categoryRu, categoryEn)
+	if err != nil {
+		http.Error(w, "Failed to create category", http.StatusInternalServerError)
+		return
+	}
+
 	item := models.MenuItem{
 		Title:       title,
 		Price:       int(price),
 		ImageURLs:   imagePaths,
 		Calories:    calories,
 		Description: description,
-		Category:    category,
+		Category:    categoryEn, // Store English translit in menu table
 	}
 
 	err = models.UpdateMenuItem(id, item)

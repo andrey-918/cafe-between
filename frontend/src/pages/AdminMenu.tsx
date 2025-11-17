@@ -1,6 +1,37 @@
 import { useEffect, useState } from 'react';
-import type { MenuItem } from '../types';
-import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem } from '../api';
+import type { MenuItem, MenuCategory } from '../types';
+import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder } from '../api';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+const SortableCategoryItem = ({ category }: { category: MenuCategory }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? 'none' : transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
+    boxShadow: isDragging ? '0 8px 25px rgba(0, 0, 0, 0.15)' : 'none',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="category-item">
+      <span>{category.name_ru}</span>
+      <div className="category-drag-handle" {...attributes} {...listeners}>⋮⋮</div>
+    </div>
+  );
+};
 
 const AdminMenu = () => {
   const [menu, setMenu] = useState<MenuItem[]>([]);
@@ -15,6 +46,18 @@ const AdminMenu = () => {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const [formData, setFormData] = useState({
     title: '',
@@ -27,6 +70,7 @@ const AdminMenu = () => {
 
   useEffect(() => {
     loadMenu();
+    loadCategories();
   }, []);
 
   useEffect(() => {
@@ -45,6 +89,15 @@ const AdminMenu = () => {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const data = await fetchMenuCategories();
+      setCategories(data);
+    } catch (err) {
+      setError('Failed to load categories');
+    }
+  };
+
   const filterMenu = () => {
     let filtered = menu;
 
@@ -57,7 +110,8 @@ const AdminMenu = () => {
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter(item => item.category === selectedCategory);
+      const categoryEn = categories.find(cat => cat.name_ru === selectedCategory)?.name_en;
+      filtered = filtered.filter(item => item.category === categoryEn);
     }
 
     setFilteredMenu(filtered);
@@ -93,6 +147,7 @@ const AdminMenu = () => {
         setSuccess('Item created successfully');
       }
       loadMenu();
+      loadCategories();
       resetForm();
       setShowForm(false);
       setTimeout(() => setSuccess(null), 5000);
@@ -116,6 +171,7 @@ const AdminMenu = () => {
     });
     setShowForm(true);
     setFormErrors({});
+    window.scrollTo(0, 0);
   };
 
   const handleDelete = async (id: number) => {
@@ -178,7 +234,41 @@ const AdminMenu = () => {
     setFormErrors({});
   };
 
-  const categories = [...new Set(menu.map(item => item.category).filter(Boolean))];
+  const categoryOptions = categories.map(cat => ({ value: cat.name_ru, label: cat.name_ru }));
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = categories.findIndex((cat) => cat.id === active.id);
+      const newIndex = categories.findIndex((cat) => cat.id === over.id);
+
+      const newCategories = arrayMove(categories, oldIndex, newIndex);
+
+      // Update sort_orders based on new positions
+      const updatedCategories = newCategories.map((cat, index) => ({
+        ...cat,
+        sort_order: index,
+      }));
+
+      // Optimistically update UI
+      setCategories(updatedCategories);
+
+      try {
+        // Update all categories' sort_order in the database
+        await Promise.all(
+          updatedCategories.map((cat) => updateMenuCategorySortOrder(cat.id, cat.sort_order))
+        );
+        setSuccess('Category order updated successfully');
+        setTimeout(() => setSuccess(null), 3000);
+      } catch (err) {
+        setError('Failed to update category order');
+        setTimeout(() => setError(null), 5000);
+        // Revert on error
+        loadCategories();
+      }
+    }
+  };
 
   const addImageURL = () => {
     setFormData({ ...formData, imageURLs: [...formData.imageURLs, ''] });
@@ -257,17 +347,25 @@ const AdminMenu = () => {
 
               <div className="form-group">
                 <label>Category: <span className="required">*</span></label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className={formErrors.category ? 'error' : ''}
-                >
-                  <option value="">Select category</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                  <option value="new">+ Add new category</option>
-                </select>
+                <div className="category-input-group">
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className={formErrors.category ? 'error' : ''}
+                  >
+                    <option value="">Select category</option>
+                    {categoryOptions.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Or enter new category in Russian"
+                    value={formData.category && !categoryOptions.some(cat => cat.value === formData.category) ? formData.category : ''}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className={formErrors.category ? 'error' : ''}
+                  />
+                </div>
                 {formErrors.category && <span className="field-error">{formErrors.category}</span>}
               </div>
 
@@ -381,7 +479,7 @@ const AdminMenu = () => {
                 >
                   <option value="">All Categories</option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat.name_en} value={cat.name_ru}>{cat.name_ru}</option>
                   ))}
                 </select>
               </div>
@@ -448,7 +546,9 @@ const AdminMenu = () => {
                     </div>
                   </div>
                   <div className="item-category">
-                    <span className="category-badge">{item.category}</span>
+                    <span className="category-badge">
+                      {categories.find(cat => cat.name_en === item.category)?.name_ru || item.category}
+                    </span>
                   </div>
                   <div className="item-price">
                     {item.price} руб.
@@ -465,6 +565,23 @@ const AdminMenu = () => {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="categories-section">
+          <h3>Manage Categories</h3>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={categories.map(cat => cat.id)} strategy={verticalListSortingStrategy}>
+              <div className="categories-list">
+                {categories.map((cat) => (
+                  <SortableCategoryItem key={cat.id} category={cat} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       </section>
     </main>

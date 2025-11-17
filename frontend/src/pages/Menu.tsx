@@ -1,40 +1,40 @@
 import { useEffect, useState } from 'react';
-import type { MenuItem } from '../types';
-import { fetchMenu } from '../api';
+import type { MenuItem, MenuCategory } from '../types';
+import { fetchMenu, fetchMenuCategories } from '../api';
 import { MenuItemCard } from '../components/MenuItemCard';
 
 import '../style/menu.css';
 
 const Menu = () => {
   const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadMenu = async () => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const loadData = async () => {
       try {
-        const menuData = await fetchMenu();
+        const [menuData, categoriesData] = await Promise.all([fetchMenu(), fetchMenuCategories()]);
         setMenu(menuData);
+        setCategories(categoriesData);
       } catch (err) {
-        setError('Failed to load menu');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
-    loadMenu();
+    loadData();
   }, []);
 
-  // Category display names
-  const categoryNames: Record<string, string> = {
-      main_meal: 'Основное меню',
-      snacks: 'Закуски',
-      breakfast: 'Завтрак',
-      desserts: 'Десерты',
-      drinks: 'Напитки',
-  };
-
-  // Category order
-  const categoryOrder = ['main_meal', 'snacks', 'breakfast', 'desserts', 'drinks'];
+  // Create category display names from fetched categories
+  const categoryNames: Record<string, string> = categories.reduce((acc, cat) => {
+    acc[cat.name_en] = cat.name_ru;
+    return acc;
+  }, {} as Record<string, string>);
 
   // Group menu items by category
   const groupedMenu = menu.reduce((acc, item) => {
@@ -46,15 +46,11 @@ const Menu = () => {
     return acc;
   }, {} as Record<string, MenuItem[]>);
 
-  // Sort categories by predefined order
-  const categories = Object.keys(groupedMenu).sort((a, b) => {
-    const indexA = categoryOrder.indexOf(a);
-    const indexB = categoryOrder.indexOf(b);
-    if (indexA === -1 && indexB === -1) return 0;
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-  });
+  // Sort categories by sort_order from fetched categories
+  const sortedCategories = categories
+    .filter(cat => groupedMenu[cat.name_en] && groupedMenu[cat.name_en].length > 0)
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map(cat => cat.name_en);
 
   return (
     <div className="menu">
@@ -67,7 +63,7 @@ const Menu = () => {
           </p>
         </div>
 
-        {categories.map((category) => {
+        {sortedCategories.map((category) => {
           return (
             <section key={category} className="menu-section fade-in">
               <h2 className="menu-section-title">
@@ -86,6 +82,7 @@ const Menu = () => {
                     price={item.price.toString()}
                     calories={item.calories}
                     image={item.imageURLs?.[0] as string | File}
+                    category={categoryNames[category] || category}
                     popular={false} // You can add logic to determine if item is popular
                     className="fade-in"
                   />

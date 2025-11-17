@@ -11,6 +11,10 @@ const News = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const loadNews = async () => {
       try {
         const newsData = await fetchNews();

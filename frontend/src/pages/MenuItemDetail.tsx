@@ -1,28 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import type { MenuItem } from '../types';
-import { fetchMenuItem } from '../api';
+import type { MenuItem, MenuCategory } from '../types';
+import { fetchMenuItem, fetchMenuCategories } from '../api';
 import '../style/menu-detail.css';
 
 const MenuItemDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<MenuItem | null>(null);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadItem = async () => {
+    const loadData = async () => {
       if (!id) return;
       try {
-        const menuItem = await fetchMenuItem(parseInt(id));
+        const [menuItem, categoriesData] = await Promise.all([
+          fetchMenuItem(parseInt(id)),
+          fetchMenuCategories()
+        ]);
         setItem(menuItem);
+        setCategories(categoriesData);
       } catch (err) {
-        setError('Failed to load menu item');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
-    loadItem();
+    loadData();
     window.scrollTo(0, 0);
   }, [id]);
 
@@ -31,14 +36,8 @@ const MenuItemDetail = () => {
   if (!item) return <p>Элемент не найден</p>;
 
   const getCategoryName = (category: string) => {
-    switch (category) {
-      case 'main_meal': return 'Основное меню';
-      case 'snacks': return 'Закуски';
-      case 'desserts': return 'Десерты';
-      case 'drinks': return 'Напитки';
-      case 'breakfast': return 'Завтрак';
-      default: return category;
-    }
+    const cat = categories.find(c => c.name_en === category);
+    return cat ? cat.name_ru : category;
   };
 
   return (

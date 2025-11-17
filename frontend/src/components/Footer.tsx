@@ -5,7 +5,7 @@ export function Footer() {
         <div className="footer-main">
           {/* About */}
           <div className="footer-section">
-            <h3 className="footer-title">Cafe</h3>
+            <h3 className="footer-title">TheCafé</h3>
             <p className="footer-text">
               Пространство между кофе и культурой
             </p>
@@ -18,7 +18,7 @@ export function Footer() {
               <p>ул. Пушкина, 15</p>
               <p>Москва, 101000</p>
               <p className="footer-text-spacing">+7 (495) 123-45-67</p>
-              <p>hello@Cafe.cafe</p>
+              <p>hello@TheCafé.cafe</p>
             </div>
           </div>
 
@@ -49,7 +49,7 @@ export function Footer() {
         <div className="footer-bottom">
           <div className="footer-bottom-content">
             <p className="footer-copyright">
-              © 2025 Cafe. Все права защищены
+              © 2025 TheCafé. Все права защищены
             </p>
             <div className="footer-legal">
               <a href="#" className="footer-legal-link">Политика конфиденциальности</a>

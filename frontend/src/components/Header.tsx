@@ -24,7 +24,7 @@ const Header = () => {
       <div className="header-container">
         <div className="header-content">
           <Link to="/" className="logo-link" onClick={closeMenu}>
-            <span className="logo-text">Cafe</span>
+            <span className="logo-text">TheCafé</span>
           </Link>
 
           <nav className="nav">

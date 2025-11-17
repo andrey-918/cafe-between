@@ -1,31 +1,24 @@
-# Admin Panel Redesign Tasks
+# TODO: Display Category Names in Russian on Frontend
 
-## Phase 1: Form Improvements ✅
-- [x] Improve form layout with better grouping and visual hierarchy
-- [x] Add real-time validation feedback
-- [x] Enhance image upload/management interface
-- [x] Add form reset and better state management
+## Current Status
+- AdminMenu.tsx: Already displays categories in Russian (name_ru)
+- Menu.tsx: Correctly maps name_en to name_ru for section headers and now passes Russian category to MenuItemCard
+- MenuItemDetail.tsx: Now fetches categories dynamically and uses name_ru for display
+- MenuItemCard.tsx: Now accepts and displays category prop below the title
+- Backend API: Returns both name_ru and name_en
 
-## Phase 2: Item List Enhancements ✅
-- [x] Add thumbnail previews in item list
-- [x] Improve item information display
-- [x] Add search and filter functionality
-- [x] Implement pagination for large lists (not needed for current scale)
+## Changes Made
+1. ✅ Updated MenuItemCard.tsx to accept category prop and display it
+2. ✅ Updated Menu.tsx to pass Russian category name to MenuItemCard
+3. ✅ Updated MenuItemDetail.tsx to fetch categories and use dynamic mapping instead of hardcoded switch
+4. ✅ Built and started the application for testing
 
-## Phase 3: UX/UI Improvements ✅
-- [x] Add loading states and skeleton screens
-- [x] Implement better confirmation dialogs
-- [x] Add bulk actions (select multiple, delete multiple)
-- [x] Improve responsive design
+## Testing
+- Frontend dev server running on http://localhost:5174/
+- Backend server running
+- Need to verify that categories now display in Russian in menu cards and detail pages
 
-## Phase 4: Error Handling & Polish ✅
-- [x] Enhanced error messages and handling
-- [x] Add undo functionality for accidental deletions (confirmation dialogs)
-- [x] Improve accessibility
-- [x] Add keyboard shortcuts (not implemented yet)
-
-## Phase 5: Testing & Optimization
-- [ ] Test all CRUD operations
-- [ ] Optimize performance for large datasets
-- [ ] Add unit tests for components
-- [ ] Final UI/UX review
+## Next Steps
+- Check the menu page to ensure categories are displayed in Russian in the cards
+- Check individual menu item detail pages to ensure categories are in Russian
+- Ensure no English category names are visible to users

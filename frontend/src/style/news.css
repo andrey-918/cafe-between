@@ -3,7 +3,7 @@
 .news-container {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 4rem 1.5rem;
+  padding: 5rem 1.5rem;
 }
 
 @media (max-width: 768px) {
@@ -14,6 +14,7 @@
 
 .news-header {
   margin-bottom: 4rem;
+  animation: fadeIn 1s ease-out 0.2s both;
 }
 
 .news-title {
@@ -22,6 +23,7 @@
   font-size: 2.5rem;
   font-weight: 300;
   letter-spacing: -0.025em;
+  
 }
 
 .news-description {
@@ -37,6 +39,7 @@
   }
 
   .news-title {
+    padding-top: 40px;
     font-size: 2rem;
   }
 

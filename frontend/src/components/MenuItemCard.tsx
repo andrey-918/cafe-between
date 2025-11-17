@@ -10,6 +10,7 @@ interface MenuItemCardProps {
   image?: string | File;
   variants?: string[];
   popular?: boolean;
+  category?: string;
   className?: string;
 }
 
@@ -22,6 +23,7 @@ export function MenuItemCard({
   image,
   variants,
   popular,
+  category,
   className
 }: MenuItemCardProps) {
   const getImageSrc = (img: string | File) => {
@@ -57,6 +59,12 @@ export function MenuItemCard({
             <h3 className="menu-item-card-title">{name}</h3>
             <span className="menu-item-card-price">{price} ₽</span>
           </div>
+
+          {category && (
+            <div className="menu-item-card-category">
+              <span className="menu-item-card-category-badge">{category}</span>
+            </div>
+          )}
 
           <p className="menu-item-card-description">
             {description}

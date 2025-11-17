@@ -11,7 +11,9 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -36,7 +38,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero">
         <h1>Пространство между кофе и культурой</h1>
-        <p>Cafe — это место, где встречаются вкус и искусство. Мы создаём атмосферу для творческих людей, любителей хорошего кофе и культурных событий.</p>
+        <p>TheCafé — это место, где встречаются вкус и искусство. Мы создаём атмосферу для творческих людей, любителей хорошего кофе и культурных событий.</p>
 
         <div className="features">
           <div className="feature">
@@ -130,6 +132,10 @@ const Home = () => {
             />
           ))}
         </div>
+
+        <Link to="/menu" className="go-to-menu-button">
+          <button>Перейти в меню</button>
+        </Link>
       </section>
     </div>
   );

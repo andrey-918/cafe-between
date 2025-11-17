@@ -1,9 +1,9 @@
 /* Menu Detail Page Styles */
 
 .menu-detail-container {
+  padding-top: 90px;
   max-width: 80rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
 }
 
 .menu-detail-header {

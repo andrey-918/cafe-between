@@ -1,4 +1,4 @@
-import type { MenuItem, NewsItem } from './types';
+import type { MenuItem, NewsItem, MenuCategory } from './types';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
@@ -15,6 +15,14 @@ export const fetchMenu = async (): Promise<MenuItem[]> => {
   const response = await fetch(`${API_BASE_URL}/menu`);
   if (!response.ok) {
     throw new Error('Failed to fetch menu');
+  }
+  return response.json();
+};
+
+export const fetchMenuCategories = async (): Promise<MenuCategory[]> => {
+  const response = await fetch(`${API_BASE_URL}/menu-categories`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch menu categories');
   }
   return response.json();
 };
@@ -156,5 +164,19 @@ export const deleteNewsItem = async (id: number): Promise<void> => {
   });
   if (!response.ok) {
     throw new Error('Failed to delete news item');
+  }
+};
+
+export const updateMenuCategorySortOrder = async (id: number, sortOrder: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/menu-categories/${id}/sort-order`, {
+    method: 'PUT',
+    headers: {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sort_order: sortOrder }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update category sort order');
   }
 };
