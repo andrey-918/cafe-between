@@ -6,6 +6,9 @@ export const getImageUrl = (imagePath: string): string => {
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
+  if (imagePath.startsWith('/uploads/')) {
+    return `${window.location.protocol}//${window.location.host}${imagePath}`;
+  }
   return `${window.location.protocol}//${window.location.host}/uploads/${imagePath}`;
 };
 
