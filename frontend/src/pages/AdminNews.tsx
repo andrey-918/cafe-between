@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { NewsItem } from '../types';
-import { fetchNews, createNewsItem, updateNewsItem, deleteNewsItem } from '../api';
+import { fetchNews, createNewsItem, updateNewsItem, deleteNewsItem, getImageUrl } from '../api';
 
 const AdminNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -424,7 +424,7 @@ const AdminNews = () => {
                       {item.imageURLs && item.imageURLs.length > 0 && (
                         <div className="item-thumbnail">
                           <img
-                            src={typeof item.imageURLs[0] === 'string' ? item.imageURLs[0] : URL.createObjectURL(item.imageURLs[0])}
+                            src={typeof item.imageURLs[0] === 'string' ? getImageUrl(item.imageURLs[0]) : URL.createObjectURL(item.imageURLs[0])}
                             alt={item.title}
                           />
                         </div>

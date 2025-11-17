@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { MenuItem, MenuCategory } from '../types';
-import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder } from '../api';
+import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder, getImageUrl } from '../api';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -536,7 +536,7 @@ const AdminMenu = () => {
                       {item.imageURLs && item.imageURLs.length > 0 && (
                         <div className="item-thumbnail">
                           <img
-                            src={typeof item.imageURLs[0] === 'string' ? item.imageURLs[0] : URL.createObjectURL(item.imageURLs[0])}
+                            src={typeof item.imageURLs[0] === 'string' ? getImageUrl(item.imageURLs[0]) : URL.createObjectURL(item.imageURLs[0])}
                             alt={item.title}
                           />
                         </div>
