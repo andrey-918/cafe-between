@@ -55,6 +55,7 @@ func CreateNewsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to fetch created News item", http.StatusInternalServerError)
 		return
 	}
+	Cache.Delete("news")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdNews)
@@ -80,6 +81,13 @@ func GetNewsHandler(w http.ResponseWriter, r *http.Request) {
 func GetNewsByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
+	cacheKey := "news_item_" + idStr
+	if cached, found := Cache.Get(cacheKey); found {
+		item := cached.(models.News)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(item)
+		return
+	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
@@ -95,6 +103,7 @@ func GetNewsByIdHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	Cache.Set(cacheKey, item, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(item)
 }
@@ -108,32 +117,17 @@ func DelNewsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the news item to delete associated images
-	item, err := models.GetNewsByID(id)
-	if err != nil {
-		if errors.Is(err, models.ErrNewsNotFound) {
-			http.Error(w, "News not found", http.StatusNotFound)
-		} else {
-			http.Error(w, "Failed to fetch news item", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	// Delete associated images
-	if err := DeleteUploadedFiles(item.ImageURLs); err != nil {
-		http.Error(w, "Failed to delete images", http.StatusInternalServerError)
-		return
-	}
-
 	err = models.DelNews(id)
 	if err != nil {
 		if errors.Is(err, models.ErrNewsNotFound) {
-			http.Error(w, "News not found", http.StatusNotFound)
+			http.Error(w, "News item not found", http.StatusNotFound)
 		} else {
-			http.Error(w, "Failed to delete news", http.StatusInternalServerError)
+			http.Error(w, "Failed to delete News item", http.StatusInternalServerError)
 		}
 		return
 	}
+	Cache.Delete("news")
+	Cache.Delete("news_item_" + idStr)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -231,5 +225,7 @@ func UpdateNewsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	Cache.Delete("news")
+	Cache.Delete("news_item_" + idStr)
 	w.WriteHeader(http.StatusNoContent)
 }

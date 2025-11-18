@@ -1,12 +1,12 @@
-# TODO: Add Caching to Cafe-Between Backend
+# TODO: Fix Caching Issues
 
-- [x] Add go-cache dependency to backend
-- [x] Modify main.go to import and initialize cache with 7-day default expiration
-- [x] Update GetMenuHandler in menuHandlers.go to check cache first, fetch from DB if miss, and cache result
-- [x] Update CreateMenuItemHandler, UpdateMenuHandler, DelMenuItemHandler in menuHandlers.go to invalidate "menu" and "menu_categories" cache keys
-- [x] Update GetMenuCategoriesHandler in menuCategoryHandlers.go to check cache first, fetch from DB if miss, and cache result
-- [x] Update UpdateMenuCategorySortOrderHandler in menuCategoryHandlers.go to invalidate "menu_categories" cache key
-- [x] Update GetNewsHandler in newsHandlers.go to check cache first, fetch from DB if miss, and cache result
-- [x] Update CreateNewsHandler, UpdateNewsHandler, DelNewsHandler in newsHandlers.go to invalidate "news" cache key
-- [x] Run go mod tidy to clean up dependencies
-- [ ] Test the caching implementation by running the server and checking API responses
+## Tasks
+- [x] Add cache invalidation in DelMenuItemHandler for "menu" and "menu_categories"
+- [x] Implement caching for GetMenuItemHandler using "menu_item_<id>"
+- [x] Add cache invalidation for individual menu items in UpdateMenuHandler and DelMenuItemHandler
+- [x] Implement caching for GetNewsByIdHandler using "news_item_<id>"
+- [x] Add cache invalidation for individual news items in UpdateNewsHandler and DelNewsHandler
+
+## Followup
+- [x] Test by running the server and reloading pages to verify faster loading with cache hits
+- [ ] If issues persist, consider persistent caching (e.g., Redis)

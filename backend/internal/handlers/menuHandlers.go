@@ -163,6 +163,9 @@ func DelMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 		// return
 	}
 
+	Cache.Delete("menu")
+	Cache.Delete("menu_categories")
+	Cache.Delete("menu_item_" + idStr)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -280,5 +283,6 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	Cache.Delete("menu")
 	Cache.Delete("menu_categories")
+	Cache.Delete("menu_item_" + idStr)
 	w.WriteHeader(http.StatusNoContent)
 }
