@@ -4,9 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/andrey-918/cafe-between/internal/database"
 	"github.com/andrey-918/cafe-between/internal/handlers"
+	"github.com/patrickmn/go-cache"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -15,6 +17,10 @@ import (
 func main() {
 	_ = godotenv.Load("../.env")
 	database.Init()
+
+	// Initialize cache with default expiration of 7 days and cleanup interval of 10 minutes
+	handlers.Cache = cache.New(7*24*time.Hour, 10*time.Minute)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

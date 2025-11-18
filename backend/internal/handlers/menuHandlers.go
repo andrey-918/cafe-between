@@ -8,6 +8,7 @@ import (
 
 	"github.com/andrey-918/cafe-between/models"
 	"github.com/gorilla/mux"
+	"github.com/patrickmn/go-cache"
 )
 
 func CreateMenuItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -75,14 +76,23 @@ func CreateMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdMenuItem)
+	Cache.Delete("menu")
+	Cache.Delete("menu_categories")
 }
 
 func GetMenuHandler(w http.ResponseWriter, r *http.Request) {
+	if cached, found := Cache.Get("menu"); found {
+		menu := cached.([]models.MenuItem)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(menu)
+		return
+	}
 	menu, err := models.GetMenu()
 	if err != nil {
 		http.Error(w, "Failed to fetch menu", http.StatusInternalServerError)
 		return
 	}
+	Cache.Set("menu", menu, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(menu)
 }
@@ -268,5 +278,7 @@ func UpdateMenuHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	Cache.Delete("menu")
+	Cache.Delete("menu_categories")
 	w.WriteHeader(http.StatusNoContent)
 }

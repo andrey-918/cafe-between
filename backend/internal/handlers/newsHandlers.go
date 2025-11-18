@@ -9,6 +9,7 @@ import (
 
 	"github.com/andrey-918/cafe-between/models"
 	"github.com/gorilla/mux"
+	"github.com/patrickmn/go-cache"
 )
 
 func CreateNewsHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,11 +61,18 @@ func CreateNewsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetNewsHandler(w http.ResponseWriter, r *http.Request) {
+	if cached, found := Cache.Get("news"); found {
+		news := cached.([]models.News)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(news)
+		return
+	}
 	news, err := models.GetNews()
 	if err != nil {
 		http.Error(w, "Failed to fetch news", http.StatusInternalServerError)
 		return
 	}
+	Cache.Set("news", news, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(news)
 }

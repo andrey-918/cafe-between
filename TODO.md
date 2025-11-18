@@ -1,9 +1,12 @@
-# Deployment Preparation Tasks
+# TODO: Add Caching to Cafe-Between Backend
 
-- [x] Create Dockerfile for backend
-- [x] Create Dockerfile for frontend
-- [x] Create docker-compose.yml for orchestration
-- [x] Create .dockerignore for backend
-- [x] Create .dockerignore for frontend
-- [x] Update environment variables for production
-- [x] Provide build and deployment instructions
+- [x] Add go-cache dependency to backend
+- [x] Modify main.go to import and initialize cache with 7-day default expiration
+- [x] Update GetMenuHandler in menuHandlers.go to check cache first, fetch from DB if miss, and cache result
+- [x] Update CreateMenuItemHandler, UpdateMenuHandler, DelMenuItemHandler in menuHandlers.go to invalidate "menu" and "menu_categories" cache keys
+- [x] Update GetMenuCategoriesHandler in menuCategoryHandlers.go to check cache first, fetch from DB if miss, and cache result
+- [x] Update UpdateMenuCategorySortOrderHandler in menuCategoryHandlers.go to invalidate "menu_categories" cache key
+- [x] Update GetNewsHandler in newsHandlers.go to check cache first, fetch from DB if miss, and cache result
+- [x] Update CreateNewsHandler, UpdateNewsHandler, DelNewsHandler in newsHandlers.go to invalidate "news" cache key
+- [x] Run go mod tidy to clean up dependencies
+- [ ] Test the caching implementation by running the server and checking API responses

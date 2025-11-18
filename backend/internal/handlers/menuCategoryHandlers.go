@@ -7,14 +7,22 @@ import (
 
 	"github.com/andrey-918/cafe-between/models"
 	"github.com/gorilla/mux"
+	"github.com/patrickmn/go-cache"
 )
 
 func GetMenuCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+	if cached, found := Cache.Get("menu_categories"); found {
+		categories := cached.([]models.MenuCategory)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(categories)
+		return
+	}
 	categories, err := models.GetMenuCategories()
 	if err != nil {
 		http.Error(w, "Failed to fetch menu categories", http.StatusInternalServerError)
 		return
 	}
+	Cache.Set("menu_categories", categories, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(categories)
 }
@@ -42,5 +50,6 @@ func UpdateMenuCategorySortOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	Cache.Delete("menu_categories")
 	w.WriteHeader(http.StatusNoContent)
 }
