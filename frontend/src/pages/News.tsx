@@ -6,8 +6,22 @@ import { fetchNews } from '../api';
 import '../style/news.css';
 
 const News = () => {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState<NewsItem[]>(() => {
+    try {
+      const cached = localStorage.getItem('news');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('news');
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
