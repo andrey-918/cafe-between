@@ -216,8 +216,7 @@
 
 @media (max-width: 768px) {
   .menu-detail-container {
-    padding-top: 80px;
-    padding: 1rem 1rem;
+    padding: 5rem 1rem;
   }
 
   .menu-detail-header-content {
