@@ -15,11 +15,15 @@ const News = () => {
   }, []);
 
   useEffect(() => {
-    const cached = localStorage.getItem('news');
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      setNews(parsed);
-      setLoading(false);
+    try {
+      const cached = localStorage.getItem('news');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setNews(parsed);
+        setLoading(false);
+      }
+    } catch (e) {
+      // Ignore cache errors
     }
 
     const loadNews = async () => {
@@ -29,7 +33,11 @@ const News = () => {
         const now = new Date();
         const visibleNews = newsArray.filter(item => new Date(item.postedAt) <= now);
         setNews(visibleNews);
-        localStorage.setItem('news', JSON.stringify(visibleNews));
+        try {
+          localStorage.setItem('news', JSON.stringify(visibleNews));
+        } catch (e) {
+          // Ignore storage errors
+        }
       } catch (err) {
         setError('Failed to load news');
       } finally {

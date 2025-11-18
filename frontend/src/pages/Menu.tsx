@@ -16,11 +16,29 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
+    try {
+      const cachedMenu = localStorage.getItem('menu');
+      const cachedCategories = localStorage.getItem('menuCategories');
+      if (cachedMenu && cachedCategories) {
+        setMenu(JSON.parse(cachedMenu));
+        setCategories(JSON.parse(cachedCategories));
+        setLoading(false);
+      }
+    } catch (e) {
+      // Ignore cache errors
+    }
+
     const loadData = async () => {
       try {
         const [menuData, categoriesData] = await Promise.all([fetchMenu(), fetchMenuCategories()]);
         setMenu(menuData);
         setCategories(categoriesData);
+        try {
+          localStorage.setItem('menu', JSON.stringify(menuData));
+          localStorage.setItem('menuCategories', JSON.stringify(categoriesData));
+        } catch (e) {
+          // Ignore storage errors
+        }
       } catch (err) {
         setError('Failed to load data');
       } finally {

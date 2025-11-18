@@ -11,24 +11,46 @@ const NewsItemDetail = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadItem = async () => {
+    try {
+      const cachedItem = localStorage.getItem(`news_item_${id}`);
+      if (cachedItem) {
+        setItem(JSON.parse(cachedItem));
+        setLoading(false);
+      }
+    } catch (e) {
+      // Ignore cache errors
+    }
+
+    const loadData = async () => {
       if (!id) return;
       try {
         const newsItem = await fetchNewsItem(parseInt(id));
         setItem(newsItem);
+        try {
+          localStorage.setItem(`news_item_${id}`, JSON.stringify(newsItem));
+        } catch (e) {
+          // Ignore storage errors
+        }
       } catch (err) {
         setError('Failed to load news item');
       } finally {
         setLoading(false);
       }
     };
-    loadItem();
+    loadData();
     window.scrollTo(0, 0);
   }, [id]);
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
-  if (!item) return <p>Элемент не найден</p>;
+  if (!item) return <p>Новость не найдена</p>;
+
+  const getImageSrc = (img: string | File) => {
+    if (typeof img === 'string') {
+      return getImageUrl(img);
+    }
+    return URL.createObjectURL(img);
+  };
 
   return (
     <div className="news-detail-container">
@@ -44,49 +66,41 @@ const NewsItemDetail = () => {
       <article className="news-detail-card">
         <header className="news-detail-header-content">
           <h1 className="news-detail-title">{item.title}</h1>
-          <div className="news-detail-meta">
-            <span className="news-detail-date">
-              Опубликовано {new Date(item.postedAt).toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </span>
-          </div>
+          <time className="news-detail-date">
+            {new Date(item.postedAt).toLocaleDateString('ru-RU', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
         </header>
 
         {item.imageURLs && item.imageURLs.length > 0 && (
           <div className="news-detail-gallery">
-            {item.imageURLs.map((url, index) => {
-              const getImageSrc = (img: string | File) => {
-                if (typeof img === 'string') {
-                  return getImageUrl(img);
-                }
-                return URL.createObjectURL(img);
-              };
-
-              return (
-                <div key={index} className="news-detail-image-wrapper">
-                  <img
-                    src={getImageSrc(url)}
-                    alt={`${item.title} фото ${index + 1}`}
-                    className="news-detail-image"
-                  />
-                </div>
-              );
-            })}
+            {item.imageURLs.map((url, index) => (
+              <div key={index} className="news-detail-image-wrapper">
+                <img
+                  src={getImageSrc(url)}
+                  alt={`${item.title} фото ${index + 1}`}
+                  className="news-detail-image"
+                />
+              </div>
+            ))}
           </div>
         )}
 
         <div className="news-detail-content">
           {item.preview && (
-            <p className="news-detail-preview">{item.preview}</p>
+            <div className="news-detail-preview">
+              <p>{item.preview}</p>
+            </div>
           )}
-          <div className="news-detail-description">
-            {item.description?.split('\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+
+          {item.description && (
+            <div className="news-detail-description">
+              <p>{item.description}</p>
+            </div>
+          )}
         </div>
       </article>
     </div>
