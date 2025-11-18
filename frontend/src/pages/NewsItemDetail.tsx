@@ -11,15 +11,28 @@ const NewsItemDetail = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let loadingTimer: number;
+    let hasShownLoading = false;
+
+    const showLoadingAfterDelay = () => {
+      loadingTimer = window.setTimeout(() => {
+        setLoading(true);
+        hasShownLoading = true;
+      }, 2000); // Show loading after 2 seconds
+    };
+
     try {
       const cachedItem = localStorage.getItem(`news_item_${id}`);
       if (cachedItem) {
         setItem(JSON.parse(cachedItem));
         setLoading(false);
+        return;
       }
     } catch (e) {
       // Ignore cache errors
     }
+
+    showLoadingAfterDelay();
 
     const loadData = async () => {
       if (!id) return;
@@ -31,14 +44,26 @@ const NewsItemDetail = () => {
         } catch (e) {
           // Ignore storage errors
         }
+        if (!hasShownLoading) {
+          setLoading(false);
+          clearTimeout(loadingTimer);
+        }
       } catch (err) {
         setError('Failed to load news item');
+        if (!hasShownLoading) {
+          setLoading(false);
+          clearTimeout(loadingTimer);
+        }
       } finally {
-        setLoading(false);
+        if (hasShownLoading) {
+          setLoading(false);
+        }
       }
     };
     loadData();
     window.scrollTo(0, 0);
+
+    return () => clearTimeout(loadingTimer);
   }, [id]);
 
   if (loading) return <p>Загрузка...</p>;

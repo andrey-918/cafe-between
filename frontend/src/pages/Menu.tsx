@@ -16,6 +16,16 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
+    let loadingTimer: number;
+    let hasShownLoading = false;
+
+    const showLoadingAfterDelay = () => {
+      loadingTimer = window.setTimeout(() => {
+        setLoading(true);
+        hasShownLoading = true;
+      }, 2000); // Show loading after 2 seconds
+    };
+
     try {
       const cachedMenu = localStorage.getItem('menu');
       const cachedCategories = localStorage.getItem('menuCategories');
@@ -23,10 +33,13 @@ const Menu = () => {
         setMenu(JSON.parse(cachedMenu));
         setCategories(JSON.parse(cachedCategories));
         setLoading(false);
+        return;
       }
     } catch (e) {
       // Ignore cache errors
     }
+
+    showLoadingAfterDelay();
 
     const loadData = async () => {
       try {
@@ -39,13 +52,25 @@ const Menu = () => {
         } catch (e) {
           // Ignore storage errors
         }
+        if (!hasShownLoading) {
+          setLoading(false);
+          clearTimeout(loadingTimer);
+        }
       } catch (err) {
         setError('Failed to load data');
+        if (!hasShownLoading) {
+          setLoading(false);
+          clearTimeout(loadingTimer);
+        }
       } finally {
-        setLoading(false);
+        if (hasShownLoading) {
+          setLoading(false);
+        }
       }
     };
     loadData();
+
+    return () => clearTimeout(loadingTimer);
   }, []);
 
   // Create category display names from fetched categories
