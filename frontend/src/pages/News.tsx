@@ -27,8 +27,12 @@ const News = () => {
     }
 
     const loadNews = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       try {
-        const newsData = await fetchNews();
+        const newsData = await fetchNews(controller.signal);
+        clearTimeout(timeoutId);
         const newsArray = Array.isArray(newsData) ? newsData : [];
         const now = new Date();
         const visibleNews = newsArray.filter(item => new Date(item.postedAt) <= now);
@@ -38,8 +42,13 @@ const News = () => {
         } catch (e) {
           // Ignore storage errors
         }
-      } catch (err) {
-        setError('Failed to load news');
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+          setError('Request timed out');
+        } else {
+          setError('Failed to load news');
+        }
       } finally {
         setLoading(false);
       }

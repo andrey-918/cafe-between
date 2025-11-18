@@ -21,16 +21,16 @@ const getAuthHeaders = (): Record<string, string> => {
   return headers;
 };
 
-export const fetchMenu = async (): Promise<MenuItem[]> => {
-  const response = await fetch(`${API_BASE_URL}/menu`);
+export const fetchMenu = async (signal?: AbortSignal): Promise<MenuItem[]> => {
+  const response = await fetch(`${API_BASE_URL}/menu`, { signal });
   if (!response.ok) {
     throw new Error('Failed to fetch menu');
   }
   return response.json();
 };
 
-export const fetchMenuCategories = async (): Promise<MenuCategory[]> => {
-  const response = await fetch(`${API_BASE_URL}/menu-categories`);
+export const fetchMenuCategories = async (signal?: AbortSignal): Promise<MenuCategory[]> => {
+  const response = await fetch(`${API_BASE_URL}/menu-categories`, { signal });
   if (!response.ok) {
     throw new Error('Failed to fetch menu categories');
   }
@@ -115,8 +115,8 @@ export const deleteMenuItem = async (id: number): Promise<void> => {
   }
 };
 
-export const fetchNews = async (): Promise<NewsItem[]> => {
-  const response = await fetch(`${API_BASE_URL}/news`);
+export const fetchNews = async (signal?: AbortSignal): Promise<NewsItem[]> => {
+  const response = await fetch(`${API_BASE_URL}/news`, { signal });
   if (!response.ok) {
     throw new Error('Failed to fetch news');
   }
