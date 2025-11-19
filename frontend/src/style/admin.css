@@ -72,6 +72,7 @@
 }
 
 .btn-edit {
+  width: 120px;
   background-color: #28a745;
   color: white;
   border: none;
@@ -87,6 +88,7 @@
 }
 
 .btn-delete {
+  width: 120px;
   background-color: #dc3545;
   color: white;
   border: none;
@@ -592,10 +594,6 @@
   flex-direction: column;
   gap: 8px;
   align-items: center; 
-}
-
-.item-action button {
-  width: 110px;
 }
 
 .category-input-group {
