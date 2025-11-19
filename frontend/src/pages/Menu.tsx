@@ -11,16 +11,6 @@ const Menu = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
-
-  useEffect(() => {
-    const savedScroll = sessionStorage.getItem('menuScrollPosition');
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
-      sessionStorage.removeItem('menuScrollPosition');
-    }
-  }, []);
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -38,6 +28,16 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
+    if (menu.length > 0) {
+      const savedScroll = sessionStorage.getItem('menuScrollPosition');
+      if (savedScroll) {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+        sessionStorage.removeItem('menuScrollPosition');
+      }
+    }
+  }, [menu]);
+
+  useEffect(() => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
@@ -46,10 +46,10 @@ const Menu = () => {
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Save on unmount for navigation
+      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
   }, []);
-
-
 
   // Create category display names from fetched categories
   const categoryNames: Record<string, string> = categories ? categories.reduce((acc, cat) => {
