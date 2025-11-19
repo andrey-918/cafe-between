@@ -76,7 +76,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(350px, 30vw), 1fr));
   gap: 2rem;
-  max-width: none;
+  max-width: 30vw;
   animation: fadeIn 1s ease-out both;
 }
 
