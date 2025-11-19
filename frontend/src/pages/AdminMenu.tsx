@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MenuItem, MenuCategory } from '../types';
 import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder, deleteMenuCategory, getImageUrl } from '../api';
+import { useNotifications } from '../contexts/NotificationContext';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -37,12 +38,11 @@ const SortableCategoryItem = ({ category, onDelete }: { category: MenuCategory, 
 };
 
 const AdminMenu = () => {
+  const { addNotification } = useNotifications();
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [filteredMenu, setFilteredMenu] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -90,7 +90,7 @@ const AdminMenu = () => {
       const menuArray = Array.isArray(data) ? data : [];
       setMenu(menuArray);
     } catch (err) {
-      setError('Не удалось загрузить меню');
+      addNotification('error', 'Не удалось загрузить меню');
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ const AdminMenu = () => {
       const categoriesArray = Array.isArray(data) ? data : [];
       setCategories(categoriesArray);
       } catch (err: unknown) {
-      setError('Не удалось загрузить категории');
+      addNotification('error', 'Не удалось загрузить категории');
       }
   };
 
@@ -141,7 +141,7 @@ const AdminMenu = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError('Please fix the form errors');
+      addNotification('error', 'Please fix the form errors');
       return;
     }
 
@@ -149,19 +149,17 @@ const AdminMenu = () => {
     try {
       if (editingItem) {
         await updateMenuItem(editingItem.id, formData);
-        setSuccess('Элемент обновлен успешно');
+        addNotification('success', 'Элемент обновлен успешно');
       } else {
         await createMenuItem(formData);
-        setSuccess('Item created successfully');
+        addNotification('success', 'Item created successfully');
       }
       loadMenu();
       loadCategories();
       resetForm();
       setShowForm(false);
-      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      setError('Не удалось сохранить элемент');
-      setTimeout(() => setError(null), 5000);
+      addNotification('error', 'Не удалось сохранить элемент');
     } finally {
       setSubmitting(false);
     }
@@ -186,12 +184,10 @@ const AdminMenu = () => {
     if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       try {
         await deleteMenuItem(id);
-        setSuccess('Item deleted successfully');
+        addNotification('success', 'Item deleted successfully');
         loadMenu();
-        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
-        setError('Failed to delete item');
-        setTimeout(() => setError(null), 5000);
+        addNotification('error', 'Failed to delete item');
       }
     }
   };
@@ -202,13 +198,11 @@ const AdminMenu = () => {
     if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя отменить.`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteMenuItem(id)));
-        setSuccess(`${selectedItems.length} items deleted successfully`);
+        addNotification('success', `${selectedItems.length} items deleted successfully`);
         setSelectedItems([]);
         loadMenu();
-        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
-        setError('Failed to delete some items');
-        setTimeout(() => setError(null), 5000);
+        addNotification('error', 'Failed to delete some items');
       }
     }
   };
@@ -267,11 +261,9 @@ const AdminMenu = () => {
         await Promise.all(
           updatedCategories.map((cat) => updateMenuCategorySortOrder(cat.id, cat.sort_order))
         );
-        setSuccess('Category order updated successfully');
-        setTimeout(() => setSuccess(null), 3000);
+        addNotification('success', 'Category order updated successfully');
       } catch (err) {
-        setError('Failed to update category order');
-        setTimeout(() => setError(null), 5000);
+        addNotification('error', 'Failed to update category order');
         // Revert on error
         loadCategories();
       }
@@ -282,17 +274,15 @@ const AdminMenu = () => {
     if (window.confirm('Are you sure you want to delete this category?')) {
       try {
         await deleteMenuCategory(id);
-        setSuccess('Category deleted successfully');
+        addNotification('success', 'Category deleted successfully');
         loadCategories();
-        setTimeout(() => setSuccess(null), 5000);
       } catch (err: unknown) {
         if (err && typeof err === 'object' && 'error' in err && err.error === 'Category is in use') {
           const itemsList = (err as any).items.map((item: any) => item.title).join(', ');
-          setError(`Cannot delete category because it contains items: ${itemsList}. Please reassign these items to another category first.`);
+          addNotification('error', `Cannot delete category because it contains items: ${itemsList}. Please reassign these items to another category first.`);
         } else {
-          setError('Failed to delete category');
+          addNotification('error', 'Failed to delete category');
         }
-        setTimeout(() => setError(null), 5000);
       }
     }
   };
@@ -327,8 +317,7 @@ const AdminMenu = () => {
           </button>
         </div>
 
-        {error && <div className="alert alert-error">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+
 
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">

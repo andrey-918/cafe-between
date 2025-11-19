@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import type { NewsItem } from '../types';
 import { fetchNews, createNewsItem, updateNewsItem, deleteNewsItem, getImageUrl } from '../api';
+import { useNotifications } from '../contexts/NotificationContext';
 import '../style/admin.css';
 
 const AdminNews = () => {
+  const { addNotification } = useNotifications();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -46,7 +46,7 @@ const AdminNews = () => {
       const newsArray = Array.isArray(data) ? data : [];
       setNews(newsArray);
     } catch (err) {
-      setError('Failed to load news');
+      addNotification('error', 'Failed to load news');
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ const AdminNews = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError('Please fix the form errors');
+      addNotification('error', 'Please fix the form errors');
       return;
     }
 
@@ -102,18 +102,16 @@ const AdminNews = () => {
     try {
       if (editingItem) {
         await updateNewsItem(editingItem.id, dataToSend);
-        setSuccess('News item updated successfully');
+        addNotification('success', 'News item updated successfully');
       } else {
         await createNewsItem(dataToSend);
-        setSuccess('News item created successfully');
+        addNotification('success', 'News item created successfully');
       }
       loadNews();
       resetForm();
       setShowForm(false);
-      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      setError('Failed to save item');
-      setTimeout(() => setError(null), 5000);
+      addNotification('error', 'Failed to save item');
     } finally {
       setSubmitting(false);
     }
@@ -141,12 +139,10 @@ const AdminNews = () => {
     if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       try {
         await deleteNewsItem(id);
-        setSuccess('News item deleted successfully');
+        addNotification('success', 'News item deleted successfully');
         loadNews();
-        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
-        setError('Failed to delete item');
-        setTimeout(() => setError(null), 5000);
+        addNotification('error', 'Failed to delete item');
       }
     }
   };
@@ -157,13 +153,11 @@ const AdminNews = () => {
     if (window.confirm(`Are you sure you want to delete ${selectedItems.length} items? This action cannot be undone.`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteNewsItem(id)));
-        setSuccess(`${selectedItems.length} items deleted successfully`);
+        addNotification('success', `${selectedItems.length} items deleted successfully`);
         setSelectedItems([]);
         loadNews();
-        setTimeout(() => setSuccess(null), 5000);
       } catch (err) {
-        setError('Failed to delete some items');
-        setTimeout(() => setError(null), 5000);
+        addNotification('error', 'Failed to delete some items');
       }
     }
   };
@@ -226,8 +220,7 @@ const AdminNews = () => {
           </button>
         </div>
 
-        {error && <div className="alert alert-error">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+
 
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
