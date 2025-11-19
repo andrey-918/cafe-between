@@ -104,6 +104,10 @@ const News = () => {
                   </div>
                 )}
                 <div className="news-item-content">
+                  <div className="news-item-meta">
+                    <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
+                    <span className="news-item-category">Событие</span>
+                  </div>
                   <h3 className="news-item-title">{item.title}</h3>
                   <p className="news-item-description">{item.preview || item.description}</p>
                   <div className="news-item-read-more">
