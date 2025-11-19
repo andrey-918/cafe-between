@@ -46,7 +46,7 @@ const AdminNews = () => {
       const newsArray = Array.isArray(data) ? data : [];
       setNews(newsArray);
     } catch (err) {
-      addNotification('error', 'Failed to load news');
+      addNotification('error', 'Ошибка при загрузке');
     } finally {
       setLoading(false);
     }

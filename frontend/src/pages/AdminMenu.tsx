@@ -152,7 +152,7 @@ const AdminMenu = () => {
         addNotification('success', 'Элемент обновлен успешно');
       } else {
         await createMenuItem(formData);
-        addNotification('success', 'Item created successfully');
+        addNotification('success', 'Элемент успешно сохранен');
       }
       loadMenu();
       loadCategories();
@@ -271,17 +271,17 @@ const AdminMenu = () => {
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    if (window.confirm('Вы уверены, что хотите удалить эту категорию?')) {
       try {
         await deleteMenuCategory(id);
-        addNotification('success', 'Category deleted successfully');
+        addNotification('success', 'Категория успешно удалена');
         loadCategories();
       } catch (err: unknown) {
-        if (err && typeof err === 'object' && 'error' in err && err.error === 'Category is in use') {
+        if (err && typeof err === 'object' && 'error' in err && err.error === 'В категории есть элементы') {
           const itemsList = (err as any).items.map((item: any) => item.title).join(', ');
-          addNotification('error', `Cannot delete category because it contains items: ${itemsList}. Please reassign these items to another category first.`);
+          addNotification('error', `Нельзя удалить непустую категорию: ${itemsList}. Пожалуйста, перенесите элементы в другую категорию.`);
         } else {
-          addNotification('error', 'Failed to delete category');
+          addNotification('error', 'Ошибка при удалении категории');
         }
       }
     }
