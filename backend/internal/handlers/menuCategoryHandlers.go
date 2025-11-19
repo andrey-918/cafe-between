@@ -51,5 +51,6 @@ func UpdateMenuCategorySortOrderHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	Cache.Delete("menu_categories")
+	Cache.Delete("menu")
 	w.WriteHeader(http.StatusNoContent)
 }
