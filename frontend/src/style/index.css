@@ -55,7 +55,7 @@
 
 @media (min-width: 1024px) {
   :root {
-    background-image: var(--bg-image);
+    background-image: var(--color-bg-secondary);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
