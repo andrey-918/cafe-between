@@ -104,6 +104,7 @@
 }
 
 .menu-detail-gallery {
+  justify-content: center;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 50vw));
   gap: 1rem;
