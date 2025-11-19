@@ -16,61 +16,19 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
-    let loadingTimer: number;
-    let hasShownLoading = false;
-
-    const showLoadingAfterDelay = () => {
-      loadingTimer = window.setTimeout(() => {
-        setLoading(true);
-        hasShownLoading = true;
-      }, 2000); // Show loading after 2 seconds
-    };
-
-    try {
-      const cachedMenu = localStorage.getItem('menu');
-      const cachedCategories = localStorage.getItem('menuCategories');
-      if (cachedMenu && cachedCategories) {
-        setMenu(JSON.parse(cachedMenu));
-        setCategories(JSON.parse(cachedCategories));
-        setLoading(false);
-        return;
-      }
-    } catch (e) {
-      // Ignore cache errors
-    }
-
-    showLoadingAfterDelay();
-
     const loadData = async () => {
+      setLoading(true);
       try {
         const [menuData, categoriesData] = await Promise.all([fetchMenu(), fetchMenuCategories()]);
         setMenu(menuData);
         setCategories(categoriesData);
-        try {
-          localStorage.setItem('menu', JSON.stringify(menuData));
-          localStorage.setItem('menuCategories', JSON.stringify(categoriesData));
-        } catch (e) {
-          // Ignore storage errors
-        }
-        if (!hasShownLoading) {
-          setLoading(false);
-          clearTimeout(loadingTimer);
-        }
       } catch (err) {
         setError('Failed to load data');
-        if (!hasShownLoading) {
-          setLoading(false);
-          clearTimeout(loadingTimer);
-        }
       } finally {
-        if (hasShownLoading) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
     loadData();
-
-    return () => clearTimeout(loadingTimer);
   }, []);
 
   // Create category display names from fetched categories
