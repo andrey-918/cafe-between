@@ -198,11 +198,11 @@ const AdminMenu = () => {
     if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя будет отменить.`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteMenuItem(id)));
-        addNotification('success', `${selectedItems.length} items deleted successfully`);
+        addNotification('success', `${selectedItems.length} элементов усешно удалено`);
         setSelectedItems([]);
         loadMenu();
       } catch (err) {
-        addNotification('error', 'Failed to delete some items');
+        addNotification('error', 'Ошибка при удалении элементов');
       }
     }
   };
@@ -261,9 +261,9 @@ const AdminMenu = () => {
         await Promise.all(
           updatedCategories.map((cat) => updateMenuCategorySortOrder(cat.id, cat.sort_order))
         );
-        addNotification('success', 'Category order updated successfully');
+        addNotification('success', 'Порядок категорий успешно обновлен');
       } catch (err) {
-        addNotification('error', 'Failed to update category order');
+        addNotification('error', 'Ошибка при изменении порядка категорий');
         // Revert on error
         loadCategories();
       }
