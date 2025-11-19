@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, ScrollRestoration } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -22,6 +22,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollRestoration />
       <div className="app">
         <Header />
         <main>

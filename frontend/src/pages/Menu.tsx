@@ -29,23 +29,7 @@ const Menu = () => {
     loadData();
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      const savedScroll = sessionStorage.getItem('menuScrollPosition');
-      if (savedScroll) {
-        setTimeout(() => window.scrollTo(0, parseInt(savedScroll, 10)), 0);
-        sessionStorage.removeItem('menuScrollPosition');
-      }
-    }
-  }, [loading]);
 
-  useEffect(() => {
-    return () => {
-      if (!loading) {
-        sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
-      }
-    };
-  }, [loading]);
 
   // Create category display names from fetched categories
   const categoryNames: Record<string, string> = categories ? categories.reduce((acc, cat) => {
