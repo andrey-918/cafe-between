@@ -30,7 +30,7 @@
   --color-link-hover: #535bf2;
   --color-button-bg: #dfdddd;
   --color-button-hover: #646cff;
-  --bg-image: url('../public/911.png');
+  --bg-image: url('/911.png');
 }
 
 [data-theme="dark"] {
@@ -50,7 +50,7 @@
   --color-link-hover: #8a8aff;
   --color-button-bg: #444;
   --color-button-hover: #7c7cff;
-  --bg-image: url('../public/911_dark.PNG');
+  --bg-image: url('/911_dark.PNG');
 }
 
 a {
