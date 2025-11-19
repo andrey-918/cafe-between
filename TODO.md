@@ -1,0 +1,4 @@
+- Edit frontend/src/style/App.css: Change max-width: 1200px to max-width: 100vw and add overflow-x: hidden to .app
+- Edit frontend/src/style/news.css: Change max-width: 80rem to max-width: min(80rem, 90vw)
+- Edit frontend/src/style/menu.css: Change max-width: 80rem to max-width: min(80rem, 90vw)
+- Test the changes by zooming in and out in the browser
