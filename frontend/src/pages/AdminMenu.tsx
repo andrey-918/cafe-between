@@ -301,7 +301,7 @@ const AdminMenu = () => {
             onClick={() => setShowForm(!showForm)}
             className="btn-primary"
           >
-            {showForm ? 'Hide Form' : '+ Add New Item'}
+            {showForm ? 'Hide Form' : '+ Добавить новый элемент'}
           </button>
         </div>
 
@@ -311,7 +311,7 @@ const AdminMenu = () => {
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-header">
-              <h3>{editingItem ? 'Edit Item' : 'Add New Item'}</h3>
+              <h3>{editingItem ? 'Edit Item' : 'Добавить новый элемент'}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -492,7 +492,7 @@ const AdminMenu = () => {
                 <div className="bulk-actions">
                   <span>{selectedItems.length} selected</span>
                   <button onClick={handleBulkDelete} className="btn-danger">
-                    Delete Selected
+                    Удалить выбранное
                   </button>
                   <button onClick={clearSelection} className="btn-secondary">
                     Clear
@@ -519,10 +519,10 @@ const AdminMenu = () => {
                   checked={selectedItems.length === filteredMenu.length && filteredMenu.length > 0}
                   onChange={selectedItems.length === filteredMenu.length ? clearSelection : selectAllItems}
                 />
-                <span>Item</span>
-                <span>Category</span>
-                <span>Price</span>
-                <span>Actions</span>
+                <span>Позиция</span>
+                <span>Категория</span>
+                <span>Цена</span>
+                <span>Действия</span>
               </div>
               {filteredMenu.map((item) => (
                 <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'selected' : ''}`}>
@@ -560,10 +560,10 @@ const AdminMenu = () => {
                   </div>
                   <div className="item-actions">
                     <button onClick={() => handleEdit(item)} className="btn-edit">
-                      Edit
+                      Редактировать
                     </button>
                     <button onClick={() => handleDelete(item.id)} className="btn-delete">
-                      Delete
+                      Удалить
                     </button>
                   </div>
                 </div>

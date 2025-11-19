@@ -217,12 +217,12 @@ const AdminNews = () => {
     <main>
       <section className="admin">
         <div className="admin-header">
-          <h2>Admin - News Management</h2>
+          <h2>Администрирование событий</h2>
           <button
             onClick={() => setShowForm(!showForm)}
             className="btn-primary"
           >
-            {showForm ? 'Hide Form' : '+ Add New Article'}
+            {showForm ? 'Hide Form' : '+ Добавить новый элемент'}
           </button>
         </div>
 
@@ -232,7 +232,7 @@ const AdminNews = () => {
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-header">
-              <h3>{editingItem ? 'Edit Article' : 'Add New Article'}</h3>
+              <h3>{editingItem ? 'Изменить событие' : 'Добавить новый элемент'}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -367,7 +367,7 @@ const AdminNews = () => {
 
         <div className="items-section">
           <div className="items-header">
-            <h3>News Articles ({filteredNews.length})</h3>
+            <h3>События ({filteredNews.length})</h3>
             <div className="items-controls">
               <div className="search-filter">
                 <input
@@ -382,7 +382,7 @@ const AdminNews = () => {
                 <div className="bulk-actions">
                   <span>{selectedItems.length} selected</span>
                   <button onClick={handleBulkDelete} className="btn-danger">
-                    Delete Selected
+                    Удалить выбранное
                   </button>
                   <button onClick={clearSelection} className="btn-secondary">
                     Clear
@@ -447,10 +447,10 @@ const AdminNews = () => {
                   </div>
                   <div className="item-actions">
                     <button onClick={() => handleEdit(item)} className="btn-edit">
-                      Edit
+                      Редактировать
                     </button>
                     <button onClick={() => handleDelete(item.id)} className="btn-delete">
-                      Delete
+                      Удалить
                     </button>
                   </div>
                 </div>

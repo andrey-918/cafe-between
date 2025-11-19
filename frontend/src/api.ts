@@ -212,3 +212,18 @@ export const updateMenuCategorySortOrder = async (id: number, sortOrder: number)
     throw new Error('Failed to update category sort order');
   }
 };
+
+export const deleteMenuCategory = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/admin/menu-categories/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    if (response.status === 409) {
+      const data = await response.json();
+      throw data; // { error: string, items: MenuItem[] }
+    } else {
+      throw new Error('Failed to delete menu category');
+    }
+  }
+};

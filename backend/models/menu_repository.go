@@ -77,3 +77,22 @@ func UpdateMenuItem(id int, item MenuItem) error {
 	}
 	return nil
 }
+
+func GetMenuItemsByCategory(categoryEn string) ([]MenuItem, error) {
+	query := `SELECT id, title, price, imageURLs, calories, description, category, createdAt, updatedAt FROM menu WHERE category = $1`
+	rows, err := database.Pool.Query(context.Background(), query, categoryEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MenuItem
+	for rows.Next() {
+		var item MenuItem
+		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.Category, &item.CreatedAt, &item.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}

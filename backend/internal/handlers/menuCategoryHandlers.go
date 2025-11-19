@@ -54,3 +54,48 @@ func UpdateMenuCategorySortOrderHandler(w http.ResponseWriter, r *http.Request) 
 	Cache.Delete("menu")
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func DeleteMenuCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	// Get the category
+	category, err := models.GetMenuCategoryByID(id)
+	if err != nil {
+		http.Error(w, "Category not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if used
+	items, err := models.GetMenuItemsByCategory(category.NameEn)
+	if err != nil {
+		http.Error(w, "Failed to check category usage", http.StatusInternalServerError)
+		return
+	}
+	if len(items) > 0 {
+		// Return 409 with list of items
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error": "Category is in use",
+			"items": items,
+		})
+		return
+	}
+
+	// Delete the category
+	err = models.DeleteMenuCategoryByID(id)
+	if err != nil {
+		http.Error(w, "Failed to delete category", http.StatusInternalServerError)
+		return
+	}
+
+	Cache.Delete("menu_categories")
+	Cache.Delete("menu")
+	w.WriteHeader(http.StatusNoContent)
+}

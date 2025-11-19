@@ -91,3 +91,22 @@ func UpdateMenuCategorySortOrder(id int, sortOrder int) error {
 	_, err := database.Pool.Exec(context.Background(), query, sortOrder, id)
 	return err
 }
+
+func GetMenuCategoryByID(id int) (MenuCategory, error) {
+	query := `SELECT id, name_ru, name_en, sort_order, createdAt FROM menu_categories WHERE id = $1`
+	var cat MenuCategory
+	err := database.Pool.QueryRow(context.Background(), query, id).Scan(&cat.ID, &cat.NameRu, &cat.NameEn, &cat.SortOrder, &cat.CreatedAt)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return MenuCategory{}, ErrMenuCategoryNotFound
+		}
+		return MenuCategory{}, err
+	}
+	return cat, nil
+}
+
+func DeleteMenuCategoryByID(id int) error {
+	query := `DELETE FROM menu_categories WHERE id = $1`
+	_, err := database.Pool.Exec(context.Background(), query, id)
+	return err
+}
