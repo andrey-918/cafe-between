@@ -6,39 +6,40 @@ import { MenuItemCard } from '../components/MenuItemCard';
 import '../style/menu.css';
 
 const Menu = () => {
-  const [menu, setMenu] = useState<MenuItem[]>([]);
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [menu, setMenu] = useState<MenuItem[]>(() => {
+    try {
+      const cached = localStorage.getItem('menu');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [categories, setCategories] = useState<MenuCategory[]>(() => {
+    try {
+      const cached = localStorage.getItem('menuCategories');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cachedMenu = localStorage.getItem('menu');
+      const cachedCategories = localStorage.getItem('menuCategories');
+      return !cachedMenu || !cachedCategories;
+    } catch {
+      return true;
+    }
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const [menuData, categoriesData] = await Promise.all([fetchMenu(), fetchMenuCategories()]);
-        setMenu(menuData);
-        setCategories(categoriesData);
-      } catch (err) {
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      const savedScroll = sessionStorage.getItem('menuScrollPosition');
-      if (savedScroll) {
-        // Delay to ensure DOM is fully rendered
-        setTimeout(() => {
-          window.scrollTo(0, parseInt(savedScroll, 10));
-          sessionStorage.removeItem('menuScrollPosition');
-        }, 100);
-      }
+    const savedScroll = sessionStorage.getItem('menuScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('menuScrollPosition');
     }
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -49,9 +50,42 @@ const Menu = () => {
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      // Save on unmount for navigation
-      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
+  }, []);
+
+  useEffect(() => {
+    try {
+      const cachedMenu = localStorage.getItem('menu');
+      const cachedCategories = localStorage.getItem('menuCategories');
+      if (cachedMenu && cachedCategories) {
+        setMenu(JSON.parse(cachedMenu));
+        setCategories(JSON.parse(cachedCategories));
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
+    } catch (e) {
+      setLoading(true);
+    }
+
+    const loadData = async () => {
+      try {
+        const [menuData, categoriesData] = await Promise.all([fetchMenu(), fetchMenuCategories()]);
+        setMenu(menuData);
+        setCategories(categoriesData);
+        try {
+          localStorage.setItem('menu', JSON.stringify(menuData));
+          localStorage.setItem('menuCategories', JSON.stringify(categoriesData));
+        } catch (e) {
+          // Ignore storage errors
+        }
+      } catch (err) {
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
   // Create category display names from fetched categories
