@@ -594,6 +594,10 @@
   align-items: center; 
 }
 
+.item-action button {
+  width: 110px;
+}
+
 .category-input-group {
   display: flex;
   flex-direction: column;
