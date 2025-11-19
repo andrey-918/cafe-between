@@ -476,7 +476,7 @@
 
 .admin-item {
   display: grid;
-  grid-template-columns: 40px 100px 120px 120px 100px;
+  grid-template-columns: 40px 700px 120px 120px 100px;
   gap: 16px;
   padding: 20px;
   border-bottom: 1px solid var(--color-border);
