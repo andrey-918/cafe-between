@@ -48,6 +48,7 @@
   --color-button-hover: #7c7cff;
   --bg-image: url('/911_dark.png');
 }
+
 body::before {
   content: '';
   position: fixed;
@@ -62,6 +63,16 @@ body::before {
   opacity: 0;
   animation: fadeInBg 1s ease-in-out 0.5s forwards;
   z-index: -1;
+}
+
+@media (max-width: 740px) {
+  :root {
+    --bg-image: url('/911_mobile.png');
+  }
+
+  [data-theme="dark"] {
+    --bg-image: url('/911_mobile_dark.png');
+  }
 }
 
 a {
