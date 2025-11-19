@@ -6,7 +6,7 @@ import { MenuItemCard } from '../components/MenuItemCard';
 import '../style/menu.css';
 
 const Menu = () => {
-  const [menu, setMenu] = useState<MenuItem[]>(() => {
+  const [menu, setMenu] = useState<MenuItem[]>(() => { 
     try {
       const cached = localStorage.getItem('menu');
       return cached ? JSON.parse(cached) : [];
