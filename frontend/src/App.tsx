@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import AdminMenu from './pages/AdminMenu';
 import AdminNews from './pages/AdminNews';
 import './style/App.css';
+import './style/header.css';
 
 function App() {
   const { isAuthenticated, loading } = useAuth();

@@ -1,2 +1,0 @@
-- Update News.tsx to improve cache loading logic and timeout handling to prevent loading from hanging.
-- Test the changes to ensure loading works properly and cache is used.

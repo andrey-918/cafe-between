@@ -1,0 +1,149 @@
+/* Header */
+.header {
+  border-bottom: 1px solid var(--color-border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--color-bg-secondary);
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+}
+
+.logo-link {
+  text-decoration: none;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--color-text-accent);
+}
+
+.nav {
+  display: flex;
+  gap: 48px;
+}
+
+.nav-link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  font-size: 16px;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+  color: var(--color-text-primary);
+}
+
+/* Mobile Navigation */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-toggle:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.nav-toggle-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-primary);
+}
+
+.nav-menu.mobile {
+  position: fixed;
+  align-items: center;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 768px;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
+}
+
+.nav-menu.mobile.open {
+  display: flex;
+}
+
+.nav-menu.mobile .nav-link {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 18px;
+}
+
+.nav-menu.mobile .nav-link:last-child {
+  border-bottom: none;
+}
+
+.nav-menu.mobile .logout-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  font-size: 18px;
+  padding: 12px 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.nav-menu.mobile .logout-btn:hover {
+  color: var(--color-text-primary);
+  transform: none;
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 16px;
+  }
+
+  .header-content {
+    padding: 16px 0;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .home {
+    padding-top: 60px; /* Adjust for mobile header height */
+  }
+}

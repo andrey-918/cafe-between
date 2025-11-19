@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { NewsItem } from '../types';
 import { fetchNews, createNewsItem, updateNewsItem, deleteNewsItem, getImageUrl } from '../api';
+import '../style/admin.css';
 
 const AdminNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
