@@ -181,13 +181,13 @@ const AdminMenu = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+    if (window.confirm('Вы уверены, что хотите удалить этот элемент? Это действие нельзя будет отменить.')) {
       try {
         await deleteMenuItem(id);
-        addNotification('success', 'Item deleted successfully');
+        addNotification('success', 'Элемент успешно удален');
         loadMenu();
       } catch (err) {
-        addNotification('error', 'Failed to delete item');
+        addNotification('error', 'Ошибка при удалении элемента');
       }
     }
   };
@@ -195,7 +195,7 @@ const AdminMenu = () => {
   const handleBulkDelete = async () => {
     if (selectedItems.length === 0) return;
 
-    if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя отменить.`)) {
+    if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя будет отменить.`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteMenuItem(id)));
         addNotification('success', `${selectedItems.length} items deleted successfully`);
