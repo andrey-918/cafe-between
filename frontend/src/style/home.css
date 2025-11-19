@@ -10,7 +10,7 @@
   text-align: center;
   max-width: min(80rem, 90vw);
   margin: 0 auto;
-  background: linear-gradient(-45deg, var(--color-bg-primary), var(--color-bg-secondary), var(--color-bg-tertiary));
+  background: transparent;
   background-size: 400% 400%;
   animation: backgroundPulse 4s ease infinite;
 }
