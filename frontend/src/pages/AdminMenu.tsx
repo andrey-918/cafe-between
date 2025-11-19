@@ -149,17 +149,17 @@ const AdminMenu = () => {
     try {
       if (editingItem) {
         await updateMenuItem(editingItem.id, formData);
-        addNotification('success', 'Элемент обновлен успешно');
+        addNotification('success', 'Элемент успешно обновлен');
       } else {
         await createMenuItem(formData);
-        addNotification('success', 'Элемент успешно сохранен');
+        addNotification('success', 'Элемент успешно создан');
       }
       loadMenu();
       loadCategories();
       resetForm();
       setShowForm(false);
     } catch (err) {
-      addNotification('error', 'Не удалось сохранить элемент');
+      addNotification('error', 'Не удалось создать элемент');
     } finally {
       setSubmitting(false);
     }
