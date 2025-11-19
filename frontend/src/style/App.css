@@ -15,3 +15,9 @@
   position: relative;
   overflow-x: hidden;
 }
+
+@media (max-width: 768px) {
+  .app {
+    width: 100%;
+  }
+}
