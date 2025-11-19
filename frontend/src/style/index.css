@@ -66,6 +66,10 @@ body::before {
 }
 
 @media (max-width: 740px) {
+  body::before {
+    background-attachment: scroll;
+  }
+
   :root {
     --bg-image: url('/911_mobile.png');
   }
