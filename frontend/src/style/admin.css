@@ -679,6 +679,26 @@
   background-color: var(--color-bg-tertiary);
 }
 
+.category-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-delete-category {
+  background-color: var(--color-error);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.btn-delete-category:hover {
+  background-color: var(--color-error-hover);
+}
+
 /* Responsive Admin Styles */
 @media (max-width: 1024px) {
   .admin {

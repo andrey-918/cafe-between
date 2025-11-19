@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { MenuItem, MenuCategory } from '../types';
-import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder, getImageUrl } from '../api';
+import { fetchMenu, createMenuItem, updateMenuItem, deleteMenuItem, fetchMenuCategories, updateMenuCategorySortOrder, deleteMenuCategory, getImageUrl } from '../api';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableCategoryItem = ({ category }: { category: MenuCategory }) => {
+const SortableCategoryItem = ({ category, onDelete }: { category: MenuCategory, onDelete: (id: number) => void }) => {
   const {
     attributes,
     listeners,
@@ -28,7 +28,10 @@ const SortableCategoryItem = ({ category }: { category: MenuCategory }) => {
   return (
     <div ref={setNodeRef} style={style} className="category-item">
       <span>{category.name_ru}</span>
-      <div className="category-drag-handle" {...attributes} {...listeners}>⋮⋮</div>
+      <div className="category-actions">
+        <div className="category-drag-handle" {...attributes} {...listeners}>⋮⋮</div>
+        <button onClick={() => onDelete(category.id)} className="btn-delete-category">×</button>
+      </div>
     </div>
   );
 };
@@ -87,7 +90,7 @@ const AdminMenu = () => {
       const menuArray = Array.isArray(data) ? data : [];
       setMenu(menuArray);
     } catch (err) {
-      setError('Failed to load menu');
+      setError('Не удалось загрузить меню');
     } finally {
       setLoading(false);
     }
@@ -98,9 +101,9 @@ const AdminMenu = () => {
       const data = await fetchMenuCategories();
       const categoriesArray = Array.isArray(data) ? data : [];
       setCategories(categoriesArray);
-    } catch (err) {
-      setError('Failed to load categories');
-    }
+      } catch (err: unknown) {
+      setError('Не удалось загрузить категории');
+      }
   };
 
   const filterMenu = () => {
@@ -126,9 +129,9 @@ const AdminMenu = () => {
     const errors: {[key: string]: string} = {};
 
     if (!formData.title.trim()) errors.title = 'Title is required';
-    if (formData.price <= 0) errors.price = 'Price must be greater than 0';
+    if (formData.price <= 0) errors.price = 'Цена должна быть больше 0';
     if (!formData.category.trim()) errors.category = 'Category is required';
-    if (formData.description.length > 250) errors.description = 'Description too long';
+    if (formData.description.length > 250) errors.description = 'Описание слишком длинное';
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -146,7 +149,7 @@ const AdminMenu = () => {
     try {
       if (editingItem) {
         await updateMenuItem(editingItem.id, formData);
-        setSuccess('Item updated successfully');
+        setSuccess('Элемент обновлен успешно');
       } else {
         await createMenuItem(formData);
         setSuccess('Item created successfully');
@@ -157,7 +160,7 @@ const AdminMenu = () => {
       setShowForm(false);
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      setError('Failed to save item');
+      setError('Не удалось сохранить элемент');
       setTimeout(() => setError(null), 5000);
     } finally {
       setSubmitting(false);
@@ -196,7 +199,7 @@ const AdminMenu = () => {
   const handleBulkDelete = async () => {
     if (selectedItems.length === 0) return;
 
-    if (window.confirm(`Are you sure you want to delete ${selectedItems.length} items? This action cannot be undone.`)) {
+    if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя отменить.`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteMenuItem(id)));
         setSuccess(`${selectedItems.length} items deleted successfully`);
@@ -239,7 +242,7 @@ const AdminMenu = () => {
     setFormErrors({});
   };
 
-  const categoryOptions = categories.map(cat => ({ value: cat.name_ru, label: cat.name_ru }));
+  const categoryOptions: { value: string; label: string }[] = categories.map(cat => ({ value: cat.name_ru, label: cat.name_ru }));
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -275,6 +278,25 @@ const AdminMenu = () => {
     }
   };
 
+  const handleDeleteCategory = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      try {
+        await deleteMenuCategory(id);
+        setSuccess('Category deleted successfully');
+        loadCategories();
+        setTimeout(() => setSuccess(null), 5000);
+      } catch (err: unknown) {
+        if (err && typeof err === 'object' && 'error' in err && err.error === 'Category is in use') {
+          const itemsList = (err as any).items.map((item: any) => item.title).join(', ');
+          setError(`Cannot delete category because it contains items: ${itemsList}. Please reassign these items to another category first.`);
+        } else {
+          setError('Failed to delete category');
+        }
+        setTimeout(() => setError(null), 5000);
+      }
+    }
+  };
+
   const addImageURL = () => {
     setFormData({ ...formData, imageURLs: [...formData.imageURLs, ''] });
   };
@@ -296,12 +318,12 @@ const AdminMenu = () => {
     <main>
       <section className="admin">
         <div className="admin-header">
-          <h2>Admin - Menu Management</h2>
+          <h2>Администрирование меню</h2>
           <button
             onClick={() => setShowForm(!showForm)}
             className="btn-primary"
           >
-            {showForm ? 'Hide Form' : '+ Добавить новый элемент'}
+            {showForm ? 'Скрыть форму' : '+ Добавить новый элемент'}
           </button>
         </div>
 
@@ -311,7 +333,7 @@ const AdminMenu = () => {
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-header">
-              <h3>{editingItem ? 'Edit Item' : 'Добавить новый элемент'}</h3>
+              <h3>{editingItem ? 'Изменить элемент' : 'Добавить новый элемент'}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -327,7 +349,7 @@ const AdminMenu = () => {
             <div className="form-content">
               <div className="form-grid">
               <div className="form-group">
-                <label>Title: <span className="required">*</span></label>
+                <label>Название: <span className="required">*</span></label>
                 <input
                   type="text"
                   value={formData.title}
@@ -365,7 +387,7 @@ const AdminMenu = () => {
                   </select>
                   <input
                     type="text"
-                    placeholder="Or enter new category in Russian"
+                    placeholder="Или введите новую категорию"
                     value={formData.category && !categoryOptions.some(cat => cat.value === formData.category) ? formData.category : ''}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className={formErrors.category ? 'error' : ''}
@@ -385,83 +407,83 @@ const AdminMenu = () => {
               </div>
             </div>
 
-                <div className="form-group full-width">
-                  <label>Description:</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
-                    maxLength={250}
-                    rows={3}
-                    placeholder="Enter item description..."
-                    className={formErrors.description ? 'error' : ''}
-                  />
-                  <div className="char-count">
-                    <span>{formData.description.length}/250 characters</span>
-                  </div>
-                  {formErrors.description && <span className="field-error">{formErrors.description}</span>}
-                </div>
+            <div className="form-group full-width">
+              <label>Description:</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
+                maxLength={250}
+                rows={3}
+                placeholder="Enter item description..."
+                className={formErrors.description ? 'error' : ''}
+              />
+              <div className="char-count">
+                <span>{formData.description.length}/250 characters</span>
+              </div>
+              {formErrors.description && <span className="field-error">{formErrors.description}</span>}
+            </div>
 
-                <div className="form-group full-width">
-                  <label>Images:</label>
-                  <div className="image-manager">
-                    {formData.imageURLs.map((url, index) => (
-                      <div key={index} className="image-input-group">
-                        {typeof url === 'string' ? (
-                          <div className="image-url-input">
-                            <input
-                              type="url"
-                              value={url}
-                              onChange={(e) => updateImageURL(index, e.target.value)}
-                              placeholder="https://example.com/image.jpg"
-                            />
-                            {url && (
-                              <div className="image-preview">
-                                <img src={url} alt={`Preview ${index + 1}`} />
-                              </div>
-                            )}
+            <div className="form-group full-width">
+              <label>Images:</label>
+              <div className="image-manager">
+                {formData.imageURLs.map((url, index) => (
+                  <div key={index} className="image-input-group">
+                    {typeof url === 'string' ? (
+                      <div className="image-url-input">
+                        <input
+                          type="url"
+                          value={url}
+                          onChange={(e) => updateImageURL(index, e.target.value)}
+                          placeholder="https://example.com/image.jpg"
+                        />
+                        {url && (
+                          <div className="image-preview">
+                            <img src={url} alt={`Preview ${index + 1}`} />
                           </div>
-                        ) : (
-                          <div className="image-file-input">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) updateImageURL(index, file);
-                              }}
-                            />
-                            <div className="image-preview">
-                              <img src={URL.createObjectURL(url)} alt={`Preview ${index + 1}`} />
-                            </div>
-                          </div>
-                        )}
-                        {formData.imageURLs.length > 1 && (
-                          <button type="button" onClick={() => removeImageURL(index)} className="btn-remove">
-                            ×
-                          </button>
                         )}
                       </div>
-                    ))}
-                    <div className="image-actions">
-                      <button type="button" onClick={addImageURL} className="btn-secondary">
-                        + Add Image URL
+                    ) : (
+                      <div className="image-file-input">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) updateImageURL(index, file);
+                          }}
+                        />
+                        <div className="image-preview">
+                          <img src={URL.createObjectURL(url)} alt={`Preview ${index + 1}`} />
+                        </div>
+                      </div>
+                    )}
+                    {formData.imageURLs.length > 1 && (
+                      <button type="button" onClick={() => removeImageURL(index)} className="btn-remove">
+                        ×
                       </button>
-                      <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })} className="btn-secondary">
-                        + Upload File
-                      </button>
-                    </div>
+                    )}
                   </div>
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" disabled={submitting} className="btn-primary">
-                    {submitting ? 'Saving...' : (editingItem ? 'Update Item' : 'Create Item')}
+                ))}
+                <div className="image-actions">
+                  <button type="button" onClick={addImageURL} className="btn-secondary">
+                    + Add Image URL
                   </button>
-                  <button type="button" onClick={() => { resetForm(); setShowForm(false); }} className="btn-secondary">
-                    Cancel
+                  <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })} className="btn-secondary">
+                    + Upload File
                   </button>
                 </div>
               </div>
+            </div>
+
+            <div className="form-actions">
+              <button type="submit" disabled={submitting} className="btn-primary">
+                {submitting ? 'Saving...' : (editingItem ? 'Update Item' : 'Create Item')}
+              </button>
+              <button type="button" onClick={() => { resetForm(); setShowForm(false); }} className="btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
           </form>
         )}
 
@@ -492,7 +514,7 @@ const AdminMenu = () => {
                 <div className="bulk-actions">
                   <span>{selectedItems.length} selected</span>
                   <button onClick={handleBulkDelete} className="btn-danger">
-                    Удалить выбранное
+                    Delete Selected
                   </button>
                   <button onClick={clearSelection} className="btn-secondary">
                     Clear
@@ -519,7 +541,7 @@ const AdminMenu = () => {
                   checked={selectedItems.length === filteredMenu.length && filteredMenu.length > 0}
                   onChange={selectedItems.length === filteredMenu.length ? clearSelection : selectAllItems}
                 />
-                <span>Позиция</span>
+                <span>Элемент</span>
                 <span>Категория</span>
                 <span>Цена</span>
                 <span>Действия</span>
@@ -582,7 +604,7 @@ const AdminMenu = () => {
             <SortableContext items={categories.map(cat => cat.id)} strategy={verticalListSortingStrategy}>
               <div className="categories-list">
                 {categories.map((cat) => (
-                  <SortableCategoryItem key={cat.id} category={cat} />
+                  <SortableCategoryItem key={cat.id} category={cat} onDelete={handleDeleteCategory} />
                 ))}
               </div>
             </SortableContext>

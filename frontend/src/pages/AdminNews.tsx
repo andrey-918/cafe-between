@@ -232,7 +232,7 @@ const AdminNews = () => {
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-header">
-              <h3>{editingItem ? 'Изменить событие' : 'Добавить новый элемент'}</h3>
+              <h3>{editingItem ? 'Edit Article' : 'Add New Article'}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -367,7 +367,7 @@ const AdminNews = () => {
 
         <div className="items-section">
           <div className="items-header">
-            <h3>События ({filteredNews.length})</h3>
+            <h3>News Articles ({filteredNews.length})</h3>
             <div className="items-controls">
               <div className="search-filter">
                 <input
