@@ -50,7 +50,7 @@
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(350px, 30vw), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(500px, 30vw), 1fr));
   gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;
