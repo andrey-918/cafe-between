@@ -1,4 +1,0 @@
-- [ ] Modify Menu.tsx: Remove window.scrollTo(0, 0), add scroll restoration using sessionStorage
-- [ ] Modify News.tsx: Remove window.scrollTo(0, 0), add scroll restoration using sessionStorage
-- [ ] Test navigation back from menu item detail to menu, ensure scroll position is restored
-- [ ] Test for news as well

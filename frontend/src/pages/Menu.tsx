@@ -14,20 +14,14 @@ const Menu = () => {
   useEffect(() => {
     const savedScroll = sessionStorage.getItem('menuScrollPosition');
     if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
+      setTimeout(() => window.scrollTo(0, parseInt(savedScroll, 10)), 0);
       sessionStorage.removeItem('menuScrollPosition');
     }
   }, []);
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
   }, []);
 
