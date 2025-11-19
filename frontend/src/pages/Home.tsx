@@ -111,6 +111,10 @@ const Home = () => {
             );
           })}
         </div>
+
+        <Link to="/news" className="view-all-events-button">
+          <button>Посмотреть все события</button>
+        </Link>
       </section>
 
       {/* Popular Menu Items */}

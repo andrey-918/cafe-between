@@ -178,18 +178,23 @@
 }
 
 .go-to-menu-button {
-  display: none;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
 }
 
-@media (max-width: 480px) {
-  .go-to-menu-button {
-    display: block !important;
-    text-align: center;
-    margin-top: 20px;
-  }
+.go-to-menu-button button {
+  width: 100%;
+  max-width: 300px;
+}
 
-  .go-to-menu-button button {
-    width: 100%;
-    max-width: 300px;
-  }
+.view-all-events-button {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.view-all-events-button button {
+  width: 100%;
+  max-width: 300px;
 }
