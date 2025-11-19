@@ -53,6 +53,19 @@
   --bg-image: url('/911_dark.png');
 }
 
+@media (min-width: 1024px) {
+  :root {
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  [data-theme="dark"] {
+    background-image: var(--bg-image);
+  }
+}
+
 a {
   font-weight: 500;
   color: var(--color-link);
