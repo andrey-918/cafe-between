@@ -74,7 +74,7 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(250px, 20vw), 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;
@@ -89,7 +89,7 @@
 
 @media (max-width: 768px) {
   .menu-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
   }
 }
