@@ -74,7 +74,7 @@
 
 .menu-grid {
   display: grid;
-  justify-content: center;
+  justify-content: start;
   grid-template-columns: repeat(auto-fit, minmax(min(400px, 20vw), 400px));
   gap: 2rem;
   max-width: none;
