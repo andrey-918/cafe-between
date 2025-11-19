@@ -50,6 +50,8 @@ const Menu = () => {
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Save on unmount for navigation
+      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
   }, []);
 
