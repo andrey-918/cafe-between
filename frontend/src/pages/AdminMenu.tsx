@@ -128,10 +128,10 @@ const AdminMenu = () => {
   const validateForm = () => {
     const errors: {[key: string]: string} = {};
 
-    if (!formData.title.trim()) errors.title = 'Title is required';
+    if (!formData.title.trim()) errors.title = 'Введите название';
     if (formData.price <= 0) errors.price = 'Цена должна быть больше 0';
-    if (!formData.category.trim()) errors.category = 'Category is required';
-    if (formData.description.length > 250) errors.description = 'Описание слишком длинное';
+    if (!formData.category.trim()) errors.category = 'Укажите категорию';
+    if (formData.description.length > 250) errors.description = 'Описание слишком длинное (макс. 250 символов)';
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -141,7 +141,7 @@ const AdminMenu = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      addNotification('error', 'Please fix the form errors');
+      addNotification('error', 'Пожалуйста, исправьте ошибки в форме');
       return;
     }
 
@@ -349,7 +349,7 @@ const AdminMenu = () => {
               </div>
 
               <div className="form-group">
-                <label>Price (руб.): <span className="required">*</span></label>
+                <label>Цена (руб.): <span className="required">*</span></label>
                 <input
                   type="number"
                   step="0.01"
@@ -362,14 +362,14 @@ const AdminMenu = () => {
               </div>
 
               <div className="form-group">
-                <label>Category: <span className="required">*</span></label>
+                <label>Категория <span className="required">*</span></label>
                 <div className="category-input-group">
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className={formErrors.category ? 'error' : ''}
                   >
-                    <option value="">Select category</option>
+                    <option value="">Выберите категорию</option>
                     {categoryOptions.map(cat => (
                       <option key={cat.value} value={cat.value}>{cat.label}</option>
                     ))}
@@ -386,7 +386,7 @@ const AdminMenu = () => {
               </div>
 
               <div className="form-group">
-                <label>Calories:</label>
+                <label>Калории</label>
                 <input
                   type="number"
                   min="0"
@@ -397,7 +397,7 @@ const AdminMenu = () => {
             </div>
 
             <div className="form-group full-width">
-              <label>Description:</label>
+              <label>Описание</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
@@ -413,7 +413,7 @@ const AdminMenu = () => {
             </div>
 
             <div className="form-group full-width">
-              <label>Images:</label>
+              <label>Фото:</label>
               <div className="image-manager">
                 {formData.imageURLs.map((url, index) => (
                   <div key={index} className="image-input-group">
@@ -455,10 +455,10 @@ const AdminMenu = () => {
                 ))}
                 <div className="image-actions">
                   <button type="button" onClick={addImageURL} className="btn-secondary">
-                    + Add Image URL
+                    + Добавить фото по ссылке
                   </button>
                   <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })} className="btn-secondary">
-                    + Upload File
+                    + Добавить фото с помощью файла
                   </button>
                 </div>
               </div>
@@ -466,10 +466,10 @@ const AdminMenu = () => {
 
             <div className="form-actions">
               <button type="submit" disabled={submitting} className="btn-primary">
-                {submitting ? 'Saving...' : (editingItem ? 'Update Item' : 'Create Item')}
+                {submitting ? 'Сохранение...' : (editingItem ? 'Редактировать элемент' : 'Создать новый элемент')}
               </button>
               <button type="button" onClick={() => { resetForm(); setShowForm(false); }} className="btn-secondary">
-                Cancel
+                Отменить
               </button>
             </div>
           </div>
@@ -478,12 +478,12 @@ const AdminMenu = () => {
 
         <div className="items-section">
           <div className="items-header">
-            <h3>Menu Items ({filteredMenu.length})</h3>
+            <h3>Элементы меню({filteredMenu.length})</h3>
             <div className="items-controls">
               <div className="search-filter">
                 <input
                   type="text"
-                  placeholder="Search items..."
+                  placeholder="Поиск..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -493,7 +493,7 @@ const AdminMenu = () => {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="filter-select"
                 >
-                  <option value="">All Categories</option>
+                  <option value="">Все категории</option>
                   {categories.map(cat => (
                     <option key={cat.name_en} value={cat.name_ru}>{cat.name_ru}</option>
                   ))}
@@ -501,12 +501,12 @@ const AdminMenu = () => {
               </div>
               {selectedItems.length > 0 && (
                 <div className="bulk-actions">
-                  <span>{selectedItems.length} selected</span>
+                  <span>{selectedItems.length} выбрано</span>
                   <button onClick={handleBulkDelete} className="btn-danger">
-                    Delete Selected
+                    Удалить выбранное
                   </button>
                   <button onClick={clearSelection} className="btn-secondary">
-                    Clear
+                    Очистить выбор
                   </button>
                 </div>
               )}
@@ -516,11 +516,11 @@ const AdminMenu = () => {
           {loading ? (
             <div className="loading-state">
               <div className="spinner"></div>
-              <p>Loading menu items...</p>
+              <p>Загрузка элементов меню...</p>
             </div>
           ) : filteredMenu.length === 0 ? (
             <div className="empty-state">
-              <p>No items found. {searchTerm || selectedCategory ? 'Try adjusting your search or filter.' : 'Add your first menu item above.'}</p>
+              <p>Элементы не найдены. {searchTerm || selectedCategory ? 'Попробуйте изменить фильтр поиска' : 'Добавьте первый элемент'}</p>
             </div>
           ) : (
             <div className="admin-list">
@@ -536,7 +536,7 @@ const AdminMenu = () => {
                 <span>Действия</span>
               </div>
               {filteredMenu.map((item) => (
-                <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'selected' : ''}`}>
+                <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'выбрано' : ''}`}>
                   <input
                     type="checkbox"
                     checked={selectedItems.includes(item.id)}
@@ -556,7 +556,7 @@ const AdminMenu = () => {
                         <h4>{item.title}</h4>
                         <p className="item-description">{item.description}</p>
                         <div className="item-meta">
-                          {item.calories && item.calories > 0 && <span>{item.calories} cal</span>}
+                          {item.calories && item.calories > 0 && <span>{item.calories} ккал</span>}
                         </div>
                       </div>
                     </div>
@@ -584,7 +584,7 @@ const AdminMenu = () => {
         </div>
 
         <div className="categories-section">
-          <h3>Manage Categories</h3>
+          <h3>Порядок категорий</h3>
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}

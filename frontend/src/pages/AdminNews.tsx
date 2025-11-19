@@ -69,10 +69,10 @@ const AdminNews = () => {
   const validateForm = () => {
     const errors: {[key: string]: string} = {};
 
-    if (!formData.title.trim()) errors.title = 'Title is required';
-    if (!formData.description.trim()) errors.description = 'Description is required';
-    if (formData.preview.length > 50) errors.preview = 'Preview too long';
-    if (formData.description.length > 250) errors.description = 'Description too long';
+    if (!formData.title.trim()) errors.title = 'Введите заголовок';
+    if (!formData.description.trim()) errors.description = 'Введите описание';
+    if (formData.preview.length > 50) errors.preview = 'Превью слишком длинное (макс. 50 символов)';
+    if (formData.description.length > 250) errors.description = 'Описание слишком длинное (макс. 250 символов)';
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -82,7 +82,7 @@ const AdminNews = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      addNotification('error', 'Please fix the form errors');
+      addNotification('error', 'Пожалуйста, исправьте ошибки в форме');
       return;
     }
 
@@ -102,16 +102,16 @@ const AdminNews = () => {
     try {
       if (editingItem) {
         await updateNewsItem(editingItem.id, dataToSend);
-        addNotification('success', 'News item updated successfully');
+        addNotification('success', 'Событие успешно обновлено');
       } else {
         await createNewsItem(dataToSend);
-        addNotification('success', 'News item created successfully');
+        addNotification('success', 'Событие успешно создано');
       }
       loadNews();
       resetForm();
       setShowForm(false);
     } catch (err) {
-      addNotification('error', 'Failed to save item');
+      addNotification('error', 'Ошибка сохранения');
     } finally {
       setSubmitting(false);
     }
@@ -136,13 +136,13 @@ const AdminNews = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+    if (window.confirm('Уверены, что хотите удалить этот элемент? Это действие нельзя будет отменить')) {
       try {
         await deleteNewsItem(id);
-        addNotification('success', 'News item deleted successfully');
+        addNotification('success', 'Событие успешно удалено');
         loadNews();
       } catch (err) {
-        addNotification('error', 'Failed to delete item');
+        addNotification('error', 'Ошибка при удалении');
       }
     }
   };
@@ -150,14 +150,14 @@ const AdminNews = () => {
   const handleBulkDelete = async () => {
     if (selectedItems.length === 0) return;
 
-    if (window.confirm(`Are you sure you want to delete ${selectedItems.length} items? This action cannot be undone.`)) {
+    if (window.confirm(`Вы уверены, что хотите удалить ${selectedItems.length} элементов? Это действие нельзя будет отменить`)) {
       try {
         await Promise.all(selectedItems.map(id => deleteNewsItem(id)));
-        addNotification('success', `${selectedItems.length} items deleted successfully`);
+        addNotification('success', `${selectedItems.length} элементов успешно удалено`);
         setSelectedItems([]);
         loadNews();
       } catch (err) {
-        addNotification('error', 'Failed to delete some items');
+        addNotification('error', 'Ошибка при удалении элементов');
       }
     }
   };
@@ -216,7 +216,7 @@ const AdminNews = () => {
             onClick={() => setShowForm(!showForm)}
             className="btn-primary"
           >
-            {showForm ? 'Hide Form' : '+ Добавить новый элемент'}
+            {showForm ? 'Скрыть форму' : '+ Добавить новый элемент'}
           </button>
         </div>
 
@@ -225,7 +225,7 @@ const AdminNews = () => {
         {showForm && (
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-header">
-              <h3>{editingItem ? 'Edit Article' : 'Add New Article'}</h3>
+              <h3>{editingItem ? 'Изменить событие' : 'Добавить новое событие'}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -241,19 +241,19 @@ const AdminNews = () => {
             <div className="form-content">
               <div className="form-grid">
               <div className="form-group">
-                <label>Title: <span className="required">*</span></label>
+                <label>Заголовок: <span className="required">*</span></label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className={formErrors.title ? 'error' : ''}
-                  placeholder="Enter article title"
+                  placeholder="Введите заголовок"
                 />
                 {formErrors.title && <span className="field-error">{formErrors.title}</span>}
               </div>
 
               <div className="form-group">
-                <label>Posted At (Moscow time):</label>
+                <label>Опубликовать (по Москвоскому времени):</label>
                 <input
                   type="datetime-local"
                   value={formData.postedAt}
@@ -262,39 +262,39 @@ const AdminNews = () => {
               </div>
 
               <div className="form-group full-width">
-                <label>Preview:</label>
+                <label>Превью:</label>
                 <textarea
                   value={formData.preview}
                   onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 50) })}
                   maxLength={50}
                   rows={2}
-                  placeholder="Short preview text (optional)"
+                  placeholder="Введите превью"
                   className={formErrors.preview ? 'error' : ''}
                 />
                 <div className="char-count">
-                  <span>{formData.preview.length}/50 characters</span>
+                  <span>{formData.preview.length}/50 символов</span>
                 </div>
                 {formErrors.preview && <span className="field-error">{formErrors.preview}</span>}
               </div>
 
               <div className="form-group full-width">
-                <label>Description: <span className="required">*</span></label>
+                <label>Описание: <span className="required">*</span></label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
                   maxLength={250}
                   rows={4}
-                  placeholder="Full article content"
+                  placeholder="Напишите описание"
                   className={formErrors.description ? 'error' : ''}
                 />
                 <div className="char-count">
-                  <span>{formData.description.length}/250 characters</span>
+                  <span>{formData.description.length}/250 символов</span>
                 </div>
                 {formErrors.description && <span className="field-error">{formErrors.description}</span>}
               </div>
 
               <div className="form-group full-width">
-                <label>Images:</label>
+                <label>Изображения:</label>
                 <div className="image-manager">
                   {formData.imageURLs.map((url, index) => (
                     <div key={index} className="image-input-group">
@@ -336,10 +336,10 @@ const AdminNews = () => {
                   ))}
                   <div className="image-actions">
                     <button type="button" onClick={addImageURL} className="btn-secondary">
-                      + Add Image URL
+                      + Добавить фото по ссылке
                     </button>
                     <button type="button" onClick={() => setFormData({ ...formData, imageURLs: [...formData.imageURLs, new File([], '')] })} className="btn-secondary">
-                      + Upload File
+                      + Добавить фото с помощью файла
                     </button>
                   </div>
                 </div>
@@ -348,10 +348,10 @@ const AdminNews = () => {
 
               <div className="form-actions">
                 <button type="submit" disabled={submitting} className="btn-primary">
-                  {submitting ? 'Saving...' : (editingItem ? 'Update Article' : 'Create Article')}
+                  {submitting ? 'Сохранение...' : (editingItem ? 'Обновить событие' : 'Создать новое событие')}
                 </button>
                 <button type="button" onClick={() => { resetForm(); setShowForm(false); }} className="btn-secondary">
-                  Cancel
+                  Отменить
                 </button>
               </div>
             </div>
@@ -360,12 +360,12 @@ const AdminNews = () => {
 
         <div className="items-section">
           <div className="items-header">
-            <h3>News Articles ({filteredNews.length})</h3>
+            <h3>События ({filteredNews.length})</h3>
             <div className="items-controls">
               <div className="search-filter">
                 <input
                   type="text"
-                  placeholder="Search articles..."
+                  placeholder="Поиск..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -373,12 +373,12 @@ const AdminNews = () => {
               </div>
               {selectedItems.length > 0 && (
                 <div className="bulk-actions">
-                  <span>{selectedItems.length} selected</span>
+                  <span>{selectedItems.length} выбрано</span>
                   <button onClick={handleBulkDelete} className="btn-danger">
                     Удалить выбранное
                   </button>
                   <button onClick={clearSelection} className="btn-secondary">
-                    Clear
+                    Очистить выбор
                   </button>
                 </div>
               )}
@@ -388,11 +388,11 @@ const AdminNews = () => {
           {loading ? (
             <div className="loading-state">
               <div className="spinner"></div>
-              <p>Loading news articles...</p>
+              <p>Загрузка событий...</p>
             </div>
           ) : filteredNews.length === 0 ? (
             <div className="empty-state">
-              <p>No articles found. {searchTerm ? 'Try adjusting your search.' : 'Add your first news article above.'}</p>
+              <p>События не найдены. {searchTerm ? 'Попробуйте изменить фильтр поиска' : 'Добавьте первый элемент'}</p>
             </div>
           ) : (
             <div className="admin-list">
@@ -402,12 +402,12 @@ const AdminNews = () => {
                   checked={selectedItems.length === filteredNews.length && filteredNews.length > 0}
                   onChange={selectedItems.length === filteredNews.length ? clearSelection : selectAllItems}
                 />
-                <span>Article</span>
-                <span>Posted</span>
-                <span>Actions</span>
+                <span>Событие</span>
+                <span>Опубликовано</span>
+                <span>Действия</span>
               </div>
               {filteredNews.map((item) => (
-                <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'selected' : ''}`}>
+                <div key={item.id} className={`admin-item ${selectedItems.includes(item.id) ? 'выбрано' : ''}`}>
                   <input
                     type="checkbox"
                     checked={selectedItems.includes(item.id)}
