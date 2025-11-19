@@ -476,7 +476,7 @@
 
 .admin-item {
   display: grid;
-  grid-template-columns: 40px 600px 120px 120px 100px;
+  grid-template-columns: 40px 1fr 120px 120px 100px;
   gap: 16px;
   padding: 20px;
   border-bottom: 1px solid var(--color-border);
@@ -589,8 +589,9 @@
 
 .item-actions {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  justify-content: center;
+  align-items: center; 
 }
 
 .category-input-group {
