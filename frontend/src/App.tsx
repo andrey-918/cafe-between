@@ -22,7 +22,6 @@ function App() {
 
   return (
     <Router>
-      <ScrollRestoration />
       <div className="app">
         <Header />
         <main>
