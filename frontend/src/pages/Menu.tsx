@@ -30,22 +30,24 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      const savedScroll = sessionStorage.getItem('menuScrollPosition');
-      if (savedScroll) {
-        setTimeout(() => window.scrollTo(0, parseInt(savedScroll, 10)), 0);
-        sessionStorage.removeItem('menuScrollPosition');
-      }
+    const savedScroll = sessionStorage.getItem('menuScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('menuScrollPosition');
     }
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
-    return () => {
-      if (!loading) {
-        sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
-      }
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
     };
-  }, [loading]);
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
 
 
