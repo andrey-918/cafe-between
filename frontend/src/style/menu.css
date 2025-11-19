@@ -74,7 +74,7 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(350px, 20vw), 0fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(550px, 20vw), 0fr));
   gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;
