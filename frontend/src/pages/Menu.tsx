@@ -28,14 +28,17 @@ const Menu = () => {
   }, []);
 
   useEffect(() => {
-    if (menu.length > 0) {
+    if (!loading) {
       const savedScroll = sessionStorage.getItem('menuScrollPosition');
       if (savedScroll) {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-        sessionStorage.removeItem('menuScrollPosition');
+        // Delay to ensure DOM is fully rendered
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScroll, 10));
+          sessionStorage.removeItem('menuScrollPosition');
+        }, 100);
       }
     }
-  }, [menu]);
+  }, [loading]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
