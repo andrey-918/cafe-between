@@ -14,6 +14,14 @@ const Menu = () => {
 
 
   useEffect(() => {
+    const savedScroll = sessionStorage.getItem('menuScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('menuScrollPosition');
+    }
+  }, []);
+
+  useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
@@ -27,14 +35,6 @@ const Menu = () => {
       }
     };
     loadData();
-  }, []);
-
-  useEffect(() => {
-    const savedScroll = sessionStorage.getItem('menuScrollPosition');
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
-      sessionStorage.removeItem('menuScrollPosition');
-    }
   }, []);
 
   useEffect(() => {
