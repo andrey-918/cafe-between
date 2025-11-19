@@ -403,11 +403,11 @@ const AdminMenu = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
                 maxLength={250}
                 rows={3}
-                placeholder="Enter item description..."
+                placeholder="Напишете описание..."
                 className={formErrors.description ? 'error' : ''}
               />
               <div className="char-count">
-                <span>{formData.description.length}/250 characters</span>
+                <span>{formData.description.length}/250 символов</span>
               </div>
               {formErrors.description && <span className="field-error">{formErrors.description}</span>}
             </div>
