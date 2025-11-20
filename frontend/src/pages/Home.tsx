@@ -124,7 +124,7 @@ const Home = () => {
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
         </div>
 
-        <div className="menu-grid">
+        <div className="home-menu-grid">
           {menu.map((item, index) => (
             <MenuItemCard
               key={item.id}
