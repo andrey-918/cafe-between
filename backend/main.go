@@ -73,6 +73,8 @@ func main() {
 	adminRouter.HandleFunc("/news/{id}", handlers.UpdateNewsHandler).Methods("PUT", "OPTIONS")
 	adminRouter.HandleFunc("/news/{id}", handlers.DelNewsHandler).Methods("DELETE", "OPTIONS")
 
+	adminRouter.HandleFunc("/menu-categories/{id}", handlers.DeleteMenuCategoryHandler).Methods("DELETE", "OPTIONS")
+
 	log.Printf("Server started at :%s", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatalf("Connection failed: %v", err)
