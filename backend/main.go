@@ -46,6 +46,7 @@ func main() {
 	r.HandleFunc("/api/menu/{id}", handlers.UpdateMenuHandler).Methods("PUT", "OPTIONS")
 
 	r.HandleFunc("/api/menu-categories", handlers.GetMenuCategoriesHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/menu-categories/{id}", handlers.DeleteMenuCategoryHandler).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/api/menu-categories/{id}/sort-order", handlers.UpdateMenuCategorySortOrderHandler).Methods("PUT", "OPTIONS")
 
 	r.HandleFunc("/api/news", handlers.GetNewsHandler).Methods("GET", "OPTIONS")
