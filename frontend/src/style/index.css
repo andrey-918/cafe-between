@@ -59,17 +59,13 @@ body::before {
   background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: scroll;
   opacity: 0;
   animation: fadeInBg 1s ease-in-out 0.5s forwards;
   z-index: -1;
 }
 
 @media (max-width: 1024px) {
-  body::before {
-    background-attachment: scroll;
-  }
-
   :root {
     --bg-image: url('/911_mobile.png');
   }
