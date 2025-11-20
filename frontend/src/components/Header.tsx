@@ -19,6 +19,16 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const handleMenuClick = () => {
+    sessionStorage.removeItem('menuScrollPosition');
+    closeMenu();
+  };
+
+  const handleNewsClick = () => {
+    sessionStorage.removeItem('newsScrollPosition');
+    closeMenu();
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -29,8 +39,8 @@ const Header = () => {
 
           <nav className="nav">
             <Link to="/" className="nav-link">Главная</Link>
-            <Link to="/news" className="nav-link">События</Link>
-            <Link to="/menu" className="nav-link">Меню</Link>
+            <Link to="/news" className="nav-link" onClick={handleNewsClick}>События</Link>
+            <Link to="/menu" className="nav-link" onClick={handleMenuClick}>Меню</Link>
             {isAuthenticated && (
               <>
                 <Link to="/admin/menu" className="nav-link">Редактировать меню</Link>
