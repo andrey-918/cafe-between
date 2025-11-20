@@ -25,18 +25,10 @@ const News = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.history.scrollRestoration) {
-      window.history.scrollRestoration = 'manual';
-    }
-  }, []);
-
-  useEffect(() => {
     const savedScroll = sessionStorage.getItem('newsScrollPosition');
     if (savedScroll) {
-      requestAnimationFrame(() => {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-        sessionStorage.removeItem('newsScrollPosition');
-      });
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('newsScrollPosition');
     }
   }, []);
 
