@@ -21,11 +21,13 @@ const Header = () => {
 
   const handleMenuClick = () => {
     sessionStorage.removeItem('menuScrollPosition');
+    window.scrollTo(0, 0);
     closeMenu();
   };
 
   const handleNewsClick = () => {
     sessionStorage.removeItem('newsScrollPosition');
+    window.scrollTo(0, 0);
     closeMenu();
   };
 
@@ -58,8 +60,8 @@ const Header = () => {
 
           <nav className={`nav-menu mobile ${isMenuOpen ? 'open' : ''}`}>
             <Link to="/" className="nav-link" onClick={closeMenu}>Главная</Link>
-            <Link to="/news" className="nav-link" onClick={closeMenu}>События</Link>
-            <Link to="/menu" className="nav-link" onClick={closeMenu}>Меню</Link>
+            <Link to="/news" className="nav-link" onClick={handleNewsClick}>События</Link>
+            <Link to="/menu" className="nav-link" onClick={handleMenuClick}>Меню</Link>
             {isAuthenticated && (
               <>
                 <Link to="/admin/menu" className="nav-link" onClick={closeMenu}>Редактировать меню</Link>
