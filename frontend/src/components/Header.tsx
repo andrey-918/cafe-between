@@ -21,13 +21,11 @@ const Header = () => {
 
   const handleMenuClick = () => {
     sessionStorage.removeItem('menuScrollPosition');
-    window.scrollTo(0, 0);
     closeMenu();
   };
 
   const handleNewsClick = () => {
     sessionStorage.removeItem('newsScrollPosition');
-    window.scrollTo(0, 0);
     closeMenu();
   };
 
