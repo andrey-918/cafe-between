@@ -25,12 +25,14 @@ const News = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedScroll = sessionStorage.getItem('newsScrollPosition');
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
-      sessionStorage.removeItem('newsScrollPosition');
+    if (!loading) {
+      const savedScroll = sessionStorage.getItem('newsScrollPosition');
+      if (savedScroll) {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+        sessionStorage.removeItem('newsScrollPosition');
+      }
     }
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
