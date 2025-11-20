@@ -72,14 +72,14 @@
   }
 }
 
-.menu-grid {
+/* .menu-grid {
   display: grid;
   justify-content: start;
   grid-template-columns: repeat(auto-fit, minmax(min(200px, 500px), 350px));
   gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;
-}
+} */
 
 @media (max-width: 1024px) {
   .menu-grid {
@@ -87,6 +87,15 @@
     gap: 1.5rem;
   }
 }
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 30vw), 1fr));
+  gap: 2rem;
+  max-width: none;
+  animation: fadeIn 1s ease-out both;
+}
+
 
 @media (max-width: 768px) {
   .menu-grid {

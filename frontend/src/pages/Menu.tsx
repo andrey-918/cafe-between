@@ -134,7 +134,7 @@ const Menu = () => {
 
               {loading && <p>Загрузка...</p>}
               {error && <p>{error}</p>}
-              <div className="news-grid">
+              <div className="menu-grid">
                 {groupedMenu[category] && groupedMenu[category].map((item) => (
                   <MenuItemCard
                     key={item.id}
