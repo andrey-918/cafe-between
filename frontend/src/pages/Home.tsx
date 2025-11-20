@@ -13,10 +13,18 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (window.history.scrollRestoration) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
+
+  useEffect(() => {
     const savedScroll = sessionStorage.getItem('homeScrollPosition');
     if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
-      sessionStorage.removeItem('homeScrollPosition');
+      requestAnimationFrame(() => {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+        sessionStorage.removeItem('homeScrollPosition');
+      });
     }
   }, []);
 
