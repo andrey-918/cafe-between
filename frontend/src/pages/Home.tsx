@@ -13,7 +13,11 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const savedScroll = sessionStorage.getItem('homeScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('homeScrollPosition');
+    }
   }, []);
 
   useEffect(() => {
