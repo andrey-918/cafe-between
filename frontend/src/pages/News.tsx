@@ -99,7 +99,7 @@ const News = () => {
 
       {loading && <p>Загрузка...</p>}
       {error && <p>{error}</p>}
-      <div className="news-grid">
+      <div className="section-grid">
         {news.map((item) => {
           const getImageSrc = (img: string | File) => {
             if (typeof img === 'string') {

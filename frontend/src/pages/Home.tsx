@@ -71,7 +71,7 @@ const Home = () => {
       </section>
 
       {/* Recent News */}
-      <section className="recent-news fade-in">
+      <section className="home-section-container fade-in">
         <div className="section-header">
           <h2>Новости</h2>
           <Link to="/news" className="view-all-link">Все новости →</Link>
@@ -79,7 +79,7 @@ const Home = () => {
 
         {loading && <p>Загрузка...</p>}
         {error && <p>{error}</p>}
-        <div className="home-news-grid">
+        <div className="section-grid">
           {news.map((item, index) => {
             const getImageSrc = (img: string | File) => {
               if (typeof img === 'string') {
@@ -118,13 +118,13 @@ const Home = () => {
       </section>
 
       {/* Popular Menu Items */}
-      <section className="recent-news fade-in">
+      <section className="home-section-container fade-in">
         <div className="section-header">
           <h2>Популярные позиции</h2>
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
         </div>
 
-        <div className="home-news-grid">
+        <div className="section-grid">
           {menu.map((item, index) => (
             <MenuItemCard
               key={item.id}
