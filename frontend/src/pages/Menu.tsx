@@ -106,7 +106,6 @@ const Menu = () => {
     return acc;
   }, {} as Record<string, MenuItem[]>) : {};
 
-  // Sort categories by sort_order from fetched categories
   const sortedCategories = categories
     ? categories
         .filter(cat => groupedMenu[cat.name_en] && groupedMenu[cat.name_en].length > 0)
