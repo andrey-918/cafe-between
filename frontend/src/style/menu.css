@@ -76,7 +76,7 @@
   display: grid;
   justify-content: start;
   grid-template-columns: repeat(auto-fit, minmax(min(200px, 500px), 350px));
-  gap: 10px;
+  gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;
 }

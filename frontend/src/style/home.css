@@ -134,7 +134,7 @@
   animation: fadeIn 1s ease-out both;
 }
 
-.recent-news .home-news-grid .home-menu-grid {
+.recent-news .home-news-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 25vw), 1fr));
   gap: 32px;
