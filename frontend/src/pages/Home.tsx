@@ -118,7 +118,7 @@ const Home = () => {
       </section>
 
       {/* Popular Menu Items */}
-      <section className="popular-menu fade-in">
+      <section className="recent-news fade-in">
         <div className="section-header">
           <h2>Популярные позиции</h2>
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
