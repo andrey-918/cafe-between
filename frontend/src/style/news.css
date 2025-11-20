@@ -1,9 +1,12 @@
 /* News Page Styles */
-
 .news-container {
   max-width: min(80rem, 90vw);
   margin: 0 auto;
   padding: 5rem 1.5rem;
+}
+
+.news-container .section-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(500px, 30vw), 1fr));
 }
 
 @media (max-width: 768px) {
