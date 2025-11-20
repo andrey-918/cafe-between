@@ -71,8 +71,8 @@ const AdminNews = () => {
 
     if (!formData.title.trim()) errors.title = 'Введите заголовок';
     if (!formData.description.trim()) errors.description = 'Введите описание';
-    if (formData.preview.length > 50) errors.preview = 'Превью слишком длинное (макс. 50 символов)';
-    if (formData.description.length > 250) errors.description = 'Описание слишком длинное (макс. 250 символов)';
+    if (formData.preview.length > 100) errors.preview = 'Превью слишком длинное (макс. 100 символов)';
+    if (formData.description.length > 500) errors.description = 'Описание слишком длинное (макс. 500 символов)';
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -265,14 +265,14 @@ const AdminNews = () => {
                 <label>Превью:</label>
                 <textarea
                   value={formData.preview}
-                  onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 50) })}
-                  maxLength={50}
+                  onChange={(e) => setFormData({ ...formData, preview: e.target.value.slice(0, 100) })}
+                  maxLength={100}
                   rows={2}
                   placeholder="Введите превью"
                   className={formErrors.preview ? 'error' : ''}
                 />
                 <div className="char-count">
-                  <span>{formData.preview.length}/50 символов</span>
+                  <span>{formData.preview.length}/100 символов</span>
                 </div>
                 {formErrors.preview && <span className="field-error">{formErrors.preview}</span>}
               </div>
@@ -281,14 +281,14 @@ const AdminNews = () => {
                 <label>Описание: <span className="required">*</span></label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
-                  maxLength={250}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 500) })}
+                  maxLength={500}
                   rows={4}
                   placeholder="Напишите описание"
                   className={formErrors.description ? 'error' : ''}
                 />
                 <div className="char-count">
-                  <span>{formData.description.length}/250 символов</span>
+                  <span>{formData.description.length}/500 символов</span>
                 </div>
                 {formErrors.description && <span className="field-error">{formErrors.description}</span>}
               </div>
