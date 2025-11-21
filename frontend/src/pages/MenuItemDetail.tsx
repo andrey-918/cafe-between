@@ -31,7 +31,40 @@ const MenuItemDetail = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (loading) return <p>Загрузка...</p>;
+  if (loading) return (
+    <div className="menu-detail-container">
+      <div className="menu-detail-header">
+        <div className="back-link skeleton"></div>
+      </div>
+      <article className="menu-detail-card">
+        <header className="menu-detail-header-content">
+          <div className="menu-detail-category">
+            <div className="menu-detail-category-badge skeleton"></div>
+          </div>
+          <div className="menu-detail-title skeleton"></div>
+          <div className="menu-detail-price-section">
+            <div className="menu-detail-price skeleton"></div>
+            <div className="menu-detail-calories skeleton"></div>
+          </div>
+        </header>
+        <div className="menu-detail-gallery">
+          <div className="menu-detail-image-wrapper skeleton"></div>
+        </div>
+        <div className="menu-detail-content">
+          <div className="menu-detail-description">
+            <div className="menu-detail-description-title skeleton"></div>
+            <div className="menu-detail-description skeleton"></div>
+          </div>
+          <div className="menu-detail-meta">
+            <div className="menu-detail-meta-item">
+              <div className="menu-detail-meta-label skeleton"></div>
+              <div className="menu-detail-meta-value skeleton"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
   if (error) return <p>{error}</p>;
   if (!item) return <p>Элемент не найден</p>;
 

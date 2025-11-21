@@ -119,7 +119,7 @@ body {
 
 .section-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(400px, 30vw), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 30vw), 1fr));
   gap: 2rem;
   max-width: none;
   animation: fadeIn 1s ease-out both;

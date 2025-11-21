@@ -1,3 +1,0 @@
-- [ ] Modify GetMenuItemHandler to check cache first for "menu_item_" + idStr
-- [ ] If not in cache, fetch from DB and store in cache
-- [ ] Test the changes by running the server and verifying instant loads
