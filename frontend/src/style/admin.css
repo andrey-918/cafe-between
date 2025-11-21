@@ -835,6 +835,7 @@
 .logout-btn {
   background-color: #dc3545;
   border: none;
+  color: white;
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
@@ -843,6 +844,10 @@
 
 .logout-btn:hover {
   background-color: #c82333;
+}
+
+.nav-link .logout-btn{
+  color: white;
 }
 
 /* Detail page styles */

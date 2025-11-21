@@ -106,6 +106,14 @@ func GetMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cacheKey := "menu_item_" + idStr
+	if cached, found := Cache.Get(cacheKey); found {
+		item := cached.(models.MenuItem)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(item)
+		return
+	}
+
 	item, err := models.GetMenuItemByID(id)
 	if err != nil {
 		if errors.Is(err, models.ErrMenuItemNotFound) {
@@ -115,6 +123,7 @@ func GetMenuItemHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	Cache.Set(cacheKey, item, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(item)
 }
