@@ -136,7 +136,7 @@
 
 .home-section-container .section-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 25vw), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 25vw), 1fr));
   gap: 32px;
   max-width: 100%;
 }

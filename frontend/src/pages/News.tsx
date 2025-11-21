@@ -30,6 +30,8 @@ const News = () => {
       if (savedScroll) {
         window.scrollTo(0, parseInt(savedScroll, 10));
         sessionStorage.removeItem('newsScrollPosition');
+      } else {
+        window.scrollTo(0, 0);
       }
     }
   }, [loading]);
