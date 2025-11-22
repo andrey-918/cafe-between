@@ -19,6 +19,12 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const handleHomeClick = () => {
+    sessionStorage.removeItem('homeScrollPosition');
+    window.scrollTo(0,0)
+    closeMenu();
+  };
+
   const handleMenuClick = () => {
     sessionStorage.removeItem('menuScrollPosition');
     window.scrollTo(0,0)
@@ -59,7 +65,7 @@ const Header = () => {
           </button>
 
           <nav className={`nav-menu mobile ${isMenuOpen ? 'open' : ''}`}>
-            <Link to="/" className="nav-link" onClick={closeMenu}>Главная</Link>
+            <Link to="/" className="nav-link" onClick={handleHomeClick}>Главная</Link>
             <Link to="/news" className="nav-link" onClick={handleNewsClick}>События</Link>
             <Link to="/menu" className="nav-link" onClick={handleMenuClick}>Меню</Link>
             {isAuthenticated && (
