@@ -12,21 +12,21 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   if (window.history.scrollRestoration) {
-  //     window.history.scrollRestoration = 'manual';
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (window.history.scrollRestoration) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
 
-  // useEffect(() => {
-  //   const savedScroll = sessionStorage.getItem('homeScrollPosition');
-  //   if (savedScroll) {
-  //     requestAnimationFrame(() => {
-  //       window.scrollTo(0, parseInt(savedScroll, 10));
-  //       sessionStorage.removeItem('homeScrollPosition');
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem('homeScrollPosition');
+    if (savedScroll) {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+        sessionStorage.removeItem('homeScrollPosition');
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
