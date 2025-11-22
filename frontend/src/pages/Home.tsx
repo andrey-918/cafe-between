@@ -13,19 +13,27 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.history.scrollRestoration) {
-      window.history.scrollRestoration = 'manual';
+    const savedScroll = sessionStorage.getItem('homeScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('homeScrollPosition');
+    } else {
+      window.scrollTo(0, 0);
     }
   }, []);
 
   useEffect(() => {
-    const savedScroll = sessionStorage.getItem('homeScrollPosition');
-    if (savedScroll) {
-      requestAnimationFrame(() => {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-        sessionStorage.removeItem('homeScrollPosition');
-      });
-    }
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Save on unmount for navigation
+      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+    };
   }, []);
 
   useEffect(() => {
