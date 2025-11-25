@@ -10,11 +10,16 @@
 }
 
 @media (max-width: 768px) {
+  .news-container {
+    padding: 64px 16px;
+  }
+
   .news-container .section-grid {
-    grid-template-columns: repeat(1, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 }
+
 
 @media (max-width: 768px) {
   .news-container {
