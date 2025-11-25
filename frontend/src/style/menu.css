@@ -230,12 +230,12 @@
     font-size: 1.125rem;
     line-height: 1.4;
     word-break: break-word;
+    min-height: 50px;
     hyphens: auto;
   }
 
   .menu-item-card-price {
     margin-left: 0;
-    align-self: flex-end;
   }
 
   .menu-item-card-content {
