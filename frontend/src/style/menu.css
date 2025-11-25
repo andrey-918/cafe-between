@@ -12,6 +12,17 @@
   }
 }
 
+@media (max-width: 768px) {
+  .menu-container {
+    padding: 64px 16px;
+  }
+
+  .menu-container .section-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
 .menu-header {
   margin-bottom: 4rem;
   animation: fadeIn 1s ease-out 0.2s both;
