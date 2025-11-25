@@ -1,0 +1,2 @@
+- [ ] Add mobile styles for menu item card header to handle long titles
+- [ ] Test the layout on mobile to ensure proper display
