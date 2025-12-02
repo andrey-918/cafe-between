@@ -232,27 +232,16 @@
 }
 
 .popular-item-title {
-  color: #111827; /* gray-900 */
+  color: var(--color-text-accent); /* gray-900 */
   font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 .popular-item-description {
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-secondary); /* gray-500 */
   margin-bottom: 0.75rem;
   line-height: 1.5;
-}
-
-.popular-item-variants {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.popular-item-variant {
-  color: #9ca3af; /* gray-400 */
-  font-size: 0.875rem;
 }
 
 .popular-item-price {
@@ -261,7 +250,7 @@
 }
 
 .popular-item-price span {
-  color: #111827; /* gray-900 */
+  color: var(--color-text-accent); /* gray-900 */
   font-weight: 600;
   font-size: 1.125rem;
 }
