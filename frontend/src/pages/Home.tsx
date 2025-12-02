@@ -145,15 +145,17 @@ const Home = () => {
 
         <div className="popular-items-grid">
           {menu.map((item) => (
-            <div key={item.id} className="popular-item">
-              <div className="popular-item-content">
-                <h3 className="popular-item-title">{item.title}</h3>
-                <p className="popular-item-description">{item.description || ''}</p>
+            <Link to={`/menu/${item.id}`}>
+              <div key={item.id} className="popular-item">
+                <div className="popular-item-content">
+                  <h3 className="popular-item-title">{item.title}</h3>
+                  <p className="popular-item-description">{item.description || ''}</p>
+                </div>
+                <div className="popular-item-price">
+                  <span>{item.price} ₽</span>
+                </div>
               </div>
-              <div className="popular-item-price">
-                <span>{item.price} ₽</span>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
 
