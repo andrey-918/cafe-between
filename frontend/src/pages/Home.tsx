@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem, MenuItem } from '../types';
 import { fetchNews, fetchMenu } from '../api';
-import { MenuItemCard } from '../components/MenuItemCard';
 import '../style/home.css';
 
 
@@ -144,19 +143,17 @@ const Home = () => {
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
         </div>
 
-        <div className="section-grid">
-          {menu.map((item, index) => (
-            <MenuItemCard
-              key={item.id}
-              id={item.id}
-              name={item.title}
-              description={item.description || ''}
-              price={item.price.toString()}
-              calories={item.calories}
-              image={item.imageURLs?.[0]}
-              popular={true} // Assuming these are popular
-              className={index % 2 === 0 ? 'scale-in-scroll' : 'bounce-in-scroll'}
-            />
+        <div className="popular-items-grid">
+          {menu.map((item) => (
+            <div key={item.id} className="popular-item">
+              <div className="popular-item-content">
+                <h3 className="popular-item-name">{item.title}</h3>
+                <p className="popular-item-description">{item.description}</p>
+              </div>
+              <div className="popular-item-price">
+                <span>{item.price} ₽</span>
+              </div>
+            </div>
           ))}
         </div>
 

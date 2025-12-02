@@ -198,3 +198,51 @@
   width: 100%;
   max-width: 300px;
 }
+
+/* Popular Items */
+.popular-items-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .popular-items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 64px;
+  }
+}
+
+.popular-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popular-item-content {
+  flex: 1;
+}
+
+.popular-item-name {
+  color: #111827;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.popular-item-description {
+  color: #6b7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.popular-item-price {
+  margin-left: 24px;
+}
+
+.popular-item-price span {
+  color: #111827;
+  font-weight: 500;
+}
