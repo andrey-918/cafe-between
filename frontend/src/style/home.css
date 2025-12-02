@@ -198,3 +198,70 @@
   width: 100%;
   max-width: 300px;
 }
+
+
+
+/* Grid layout */
+.popular-items-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .popular-items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap-x: 4rem;
+    gap-y: 2rem;
+  }
+}
+
+/* Item styles */
+.popular-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.popular-item-content {
+  flex: 1;
+}
+
+.popular-item-title {
+  color: #111827; /* gray-900 */
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.popular-item-description {
+  color: #6b7280; /* gray-500 */
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.popular-item-variants {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.popular-item-variant {
+  color: #9ca3af; /* gray-400 */
+  font-size: 0.875rem;
+}
+
+.popular-item-price {
+  margin-left: 1.5rem;
+  white-space: nowrap;
+}
+
+.popular-item-price span {
+  color: #111827; /* gray-900 */
+  font-weight: 600;
+  font-size: 1.125rem;
+}
