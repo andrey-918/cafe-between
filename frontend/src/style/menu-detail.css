@@ -127,7 +127,7 @@
 @media (min-width: 768px) {
   .menu-detail-info-column {
     padding: 3rem;
-    height: 600px;
+    height: auto;
   }
 }
 

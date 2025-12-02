@@ -130,13 +130,6 @@ const MenuItemDetail = () => {
               <p>{item.description}</p>
             </div>
           )}
-
-          <div className="menu-detail-meta">
-            <div className="menu-detail-meta-item">
-              <span className="menu-detail-meta-label">Категория</span>
-              <span className="menu-detail-meta-value">{getCategoryName(item.category)}</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
