@@ -1,10 +1,10 @@
-/* News Detail Page Styles */
-
 .news-detail-container {
   padding-top: 90px;
   padding-bottom: 40px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative; /* Добавляем для гарантии позиционирования */
+  top: 0; /* Принудительно вверху */
 }
 
 .news-detail-header {

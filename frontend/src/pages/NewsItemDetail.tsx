@@ -11,6 +11,9 @@ const NewsItemDetail = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Сбрасываем скролл в самом начале
+    window.scrollTo(0, 0);
+    
     let loadingTimer: number;
     let hasShownLoading = false;
 
@@ -26,6 +29,8 @@ const NewsItemDetail = () => {
       if (cachedItem) {
         setItem(JSON.parse(cachedItem));
         setLoading(false);
+        // Убедимся, что скролл сброшен после загрузки из кэша
+        setTimeout(() => window.scrollTo(0, 0), 0);
         return;
       }
     } catch (e) {
@@ -58,13 +63,26 @@ const NewsItemDetail = () => {
         if (hasShownLoading) {
           setLoading(false);
         }
+        // Всегда скроллим к началу после загрузки
+        setTimeout(() => window.scrollTo(0, 0), 0);
       }
     };
     loadData();
-    window.scrollTo(0, 0);
 
-    return () => clearTimeout(loadingTimer);
+    return () => {
+      clearTimeout(loadingTimer);
+    };
   }, [id]);
+
+  // Добавляем еще один useEffect для скролла при изменении loading
+  useEffect(() => {
+    if (!loading && item) {
+      // Небольшая задержка для гарантии рендера контента
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    }
+  }, [loading, item]);
 
   if (loading) return (
     <div className="news-detail-container">
