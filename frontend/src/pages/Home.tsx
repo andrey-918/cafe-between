@@ -4,12 +4,33 @@ import type { NewsItem, MenuItem } from '../types';
 import { fetchNews, fetchMenu } from '../api';
 import '../style/home.css';
 
-
 const Home = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newsCount, setNewsCount] = useState(3); // По умолчанию 3
+
+  useEffect(() => {
+    // Определяем количество новостей на основе ширины экрана
+    const updateNewsCount = () => {
+      if (window.innerWidth <= 768) {
+        setNewsCount(2); // Для телефонов
+      } else {
+        setNewsCount(3); // Для компьютеров и планшетов
+      }
+    };
+
+    // Инициализируем при загрузке
+    updateNewsCount();
+
+    // Добавляем обработчик изменения размера окна
+    window.addEventListener('resize', updateNewsCount);
+
+    return () => {
+      window.removeEventListener('resize', updateNewsCount);
+    };
+  }, []);
 
   useEffect(() => {
     const savedScroll = sessionStorage.getItem('homeScrollPosition');
@@ -30,7 +51,6 @@ const Home = () => {
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      // Save on unmount for navigation
       sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
     };
   }, []);
@@ -43,9 +63,11 @@ const Home = () => {
         const menuArray = Array.isArray(menuData) ? menuData : [];
         const now = new Date();
         const visibleNews = newsArray.filter(item => new Date(item.postedAt) <= now);
-        setNews(visibleNews.slice(0, 3));
-        // Assume all menu items are popular for now, or filter by price > some value
-        setMenu(menuArray.slice(0, 6)); // Take first 6 as popular
+        
+        // Используем динамическое количество новостей
+        setNews(visibleNews.slice(0, newsCount));
+        
+        setMenu(menuArray.slice(0, 6));
       } catch (err) {
         setError('Failed to load data');
       } finally {
@@ -53,7 +75,14 @@ const Home = () => {
       }
     };
     loadData();
-  }, []);
+  }, [newsCount]); // Добавляем newsCount в зависимости
+
+  // Дополнительный эффект для обновления новостей при изменении newsCount
+  useEffect(() => {
+    if (news.length > newsCount) {
+      setNews(prevNews => prevNews.slice(0, newsCount));
+    }
+  }, [newsCount]);
 
   return (
     <div className="home">
@@ -145,8 +174,8 @@ const Home = () => {
 
         <div className="popular-items-grid">
           {menu.map((item) => (
-            <Link to={`/menu/${item.id}`}>
-              <div key={item.id} className="popular-item">
+            <Link to={`/menu/${item.id}`} key={item.id}>
+              <div className="popular-item">
                 <div className="popular-item-content">
                   <h3 className="popular-item-title">{item.title}</h3>
                   <p className="popular-item-description">{item.description || ''}</p>
