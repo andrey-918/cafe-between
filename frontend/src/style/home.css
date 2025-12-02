@@ -213,8 +213,6 @@
 @media (min-width: 768px) {
   .popular-items-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap-x: 4rem;
-    gap-y: 2rem;
   }
 }
 
