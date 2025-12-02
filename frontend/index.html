@@ -7,9 +7,54 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Предзагрузка фоновых изображений -->
+    <link rel="preload" href="/911.png" as="image" media="(min-width: 1025px)">
+    <link rel="preload" href="/911_dark.png" as="image" media="(min-width: 1025px)">
+    <link rel="preload" href="/911_mobile.png" as="image" media="(max-width: 1024px)">
+    <link rel="preload" href="/911_mobile_dark.png" as="image" media="(max-width: 1024px)">
   </head>
   <body>
+    <!-- Контейнер для фона -->
+    <div class="background-container">
+      <div class="background-overlay"></div>
+      <div class="background-image"></div>
+    </div>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Скрипт для управления фоном -->
+    <script>
+      // Предзагрузка изображений
+      document.addEventListener('DOMContentLoaded', function() {
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        const isMobile = window.innerWidth <= 1024;
+        
+        // Определяем какое изображение нужно загрузить
+        let imageUrl;
+        if (isMobile) {
+          imageUrl = theme === 'dark' ? '/911_mobile_dark.png' : '/911_mobile.png';
+        } else {
+          imageUrl = theme === 'dark' ? '/911_dark.png' : '/911.png';
+        }
+        
+        // Создаем и загружаем изображение заранее
+        const img = new Image();
+        img.src = imageUrl;
+        img.onload = function() {
+          console.log('Background image preloaded');
+        };
+        
+        // Предзагрузка изображений для другой темы
+        const otherTheme = theme === 'dark' ? 'light' : 'dark';
+        const otherImageUrl = isMobile 
+          ? (otherTheme === 'dark' ? '/911_mobile_dark.png' : '/911_mobile.png')
+          : (otherTheme === 'dark' ? '/911_dark.png' : '/911.png');
+        
+        const otherImg = new Image();
+        otherImg.src = otherImageUrl;
+      });
+    </script>
   </body>
 </html>

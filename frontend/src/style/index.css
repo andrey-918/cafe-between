@@ -26,7 +26,10 @@
   --color-link-hover: #b3b3b4;
   --color-button-bg: #dfdddd;
   --color-button-hover: #dadada;
-  --bg-image: url('/911.png');
+  --bg-image-light: url('/911.png');
+  --bg-image-dark: url('/911_dark.png');
+  --bg-image-light-mobile: url('/911_mobile.png');
+  --bg-image-dark-mobile: url('/911_mobile_dark.png');
 }
 
 [data-theme="dark"] {
@@ -46,39 +49,75 @@
   --color-link-hover: #d8d8d8;
   --color-button-bg: #444;
   --color-button-hover: #b5b5b5;
-  --bg-image: url('/911_dark.png');
 }
 
-body::before {
-  content: '';
+/* Контейнер для фона */
+.background-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: var(--bg-image);
+  z-index: -1;
+  overflow: hidden;
+  will-change: opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+/* Основной фон */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   opacity: 0;
-  animation: fadeInBg 1s ease-in-out 0.5s forwards;
-  z-index: -1;
+  animation: fadeInBg 0.8s ease-out 0.5s forwards;
+  will-change: opacity;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
 }
 
+/* Для светлой темы */
+[data-theme="light"] .background-image {
+  background-image: var(--bg-image-light);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .background-image {
+  background-image: var(--bg-image-dark);
+}
+
+/* Мобильные устройства */
 @media (max-width: 1024px) {
-  body::before {
+  .background-image {
     background-attachment: scroll;
   }
-
-  :root {
-    --bg-image: url('/911_mobile.png');
+  
+  [data-theme="light"] .background-image {
+    background-image: var(--bg-image-light-mobile);
   }
-
-  [data-theme="dark"] {
-    --bg-image: url('/911_mobile_dark.png');
+  
+  [data-theme="dark"] .background-image {
+    background-image: var(--bg-image-dark-mobile);
   }
+}
+
+/* Затемнение фона для лучшей читаемости */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-primary);
+  opacity: 0.85;
+  mix-blend-mode: normal;
 }
 
 a {
@@ -94,6 +133,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 @media (max-width: 480px) {
@@ -237,7 +277,7 @@ button:focus-visible {
 
 @keyframes fadeInBg {
   to {
-    opacity: 1;
+    opacity: 0.15; /* Или нужная вам прозрачность */
   }
 }
 
@@ -262,5 +302,3 @@ button:focus-visible {
   background-size: 400% 400%;
   animation: backgroundPulse 4s ease infinite;
 }
-
-
