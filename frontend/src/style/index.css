@@ -22,10 +22,10 @@
   --color-text-accent: #111111;
   --color-border: #e5e5e5;
   --color-hover: #bbb;
-  --color-link: #646cff;
-  --color-link-hover: #535bf2;
+  --color-link: #afafaf;
+  --color-link-hover: #b3b3b4;
   --color-button-bg: #dfdddd;
-  --color-button-hover: #646cff;
+  --color-button-hover: #dadada;
   --bg-image: url('/911.png');
 }
 
@@ -42,10 +42,10 @@
   --color-text-accent: #ffffff;
   --color-border: #333333;
   --color-hover: #555;
-  --color-link: #7c7cff;
-  --color-link-hover: #8a8aff;
+  --color-link: #d1d1d1;
+  --color-link-hover: #d8d8d8;
   --color-button-bg: #444;
-  --color-button-hover: #7c7cff;
+  --color-button-hover: #b5b5b5;
   --bg-image: url('/911_dark.png');
 }
 
