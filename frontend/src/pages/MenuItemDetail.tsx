@@ -36,8 +36,11 @@ const MenuItemDetail = () => {
       <div className="menu-detail-header">
         <div className="back-link skeleton"></div>
       </div>
-      <article className="menu-detail-card">
-        <header className="menu-detail-header-content">
+      <div className="menu-detail-layout">
+        <div className="menu-detail-image-column">
+          <div className="menu-detail-image-wrapper skeleton"></div>
+        </div>
+        <div className="menu-detail-info-column">
           <div className="menu-detail-category">
             <div className="menu-detail-category-badge skeleton"></div>
           </div>
@@ -46,11 +49,6 @@ const MenuItemDetail = () => {
             <div className="menu-detail-price skeleton"></div>
             <div className="menu-detail-calories skeleton"></div>
           </div>
-        </header>
-        <div className="menu-detail-gallery">
-          <div className="menu-detail-image-wrapper skeleton"></div>
-        </div>
-        <div className="menu-detail-content">
           <div className="menu-detail-description">
             <div className="menu-detail-description-title skeleton"></div>
             <div className="menu-detail-description skeleton"></div>
@@ -62,7 +60,7 @@ const MenuItemDetail = () => {
             </div>
           </div>
         </div>
-      </article>
+      </div>
     </div>
   );
   if (error) return <p>{error}</p>;
@@ -71,6 +69,13 @@ const MenuItemDetail = () => {
   const getCategoryName = (category: string) => {
     const cat = categories.find(c => c.name_en === category);
     return cat ? cat.name_ru : category;
+  };
+
+  const getImageSrc = (img: string | File) => {
+    if (typeof img === 'string') {
+      return getImageUrl(img);
+    }
+    return URL.createObjectURL(img);
   };
 
   return (
@@ -84,46 +89,41 @@ const MenuItemDetail = () => {
         </Link>
       </div>
 
-      <article className="menu-detail-card">
-        <header className="menu-detail-header-content">
+      <div className="menu-detail-layout">
+        {/* Левая колонка - фото */}
+        <div className="menu-detail-image-column">
+          {item.imageURLs && item.imageURLs.length > 0 ? (
+            <div className="menu-detail-image-wrapper">
+              <img
+                src={getImageSrc(item.imageURLs[0])}
+                alt={item.title}
+                className="menu-detail-image"
+              />
+            </div>
+          ) : (
+            <div className="menu-detail-image-placeholder">
+              <span>Нет фото</span>
+            </div>
+          )}
+        </div>
+
+        {/* Правая колонка - информация */}
+        <div className="menu-detail-info-column">
           <div className="menu-detail-category">
             <span className="menu-detail-category-badge">
               {getCategoryName(item.category)}
             </span>
           </div>
+          
           <h1 className="menu-detail-title">{item.title}</h1>
+          
           <div className="menu-detail-price-section">
             <span className="menu-detail-price">{item.price} ₽</span>
             {item.calories && (
               <span className="menu-detail-calories">{item.calories} ккал</span>
             )}
           </div>
-        </header>
 
-        {item.imageURLs && item.imageURLs.length > 0 && (
-          <div className="menu-detail-gallery">
-            {item.imageURLs.map((url, index) => {
-              const getImageSrc = (img: string | File) => {
-                if (typeof img === 'string') {
-                  return getImageUrl(img);
-                }
-                return URL.createObjectURL(img);
-              };
-
-              return (
-                <div key={index} className="menu-detail-image-wrapper">
-                  <img
-                    src={getImageSrc(url)}
-                    alt={`${item.title} фото ${index + 1}`}
-                    className="menu-detail-image"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="menu-detail-content">
           {item.description && (
             <div className="menu-detail-description">
               <h3 className="menu-detail-description-title">Описание</h3>
@@ -138,7 +138,7 @@ const MenuItemDetail = () => {
             </div>
           </div>
         </div>
-      </article>
+      </div>
     </div>
   );
 };
