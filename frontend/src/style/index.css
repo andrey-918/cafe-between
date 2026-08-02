@@ -1,5 +1,5 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Source Serif Pro', serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -14,18 +14,22 @@
 
   /* Light theme colors */
   --color-bg-primary: #f5f5f5;
-  --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #f9f9f9;
+  --color-bg-secondary: #fffffffa;
+  --color-bg-tertiary: #f9f9f9e6;
   --color-text-primary: #333;
   --color-text-secondary: #666666;
   --color-text-tertiary: #999999;
   --color-text-accent: #111111;
   --color-border: #e5e5e5;
   --color-hover: #bbb;
-  --color-link: #646cff;
-  --color-link-hover: #535bf2;
-  --color-button-bg: #ccc;
-  --color-button-hover: #646cff;
+  --color-link: #afafaf;
+  --color-link-hover: #b3b3b4;
+  --color-button-bg: #dfdddd;
+  --color-button-hover: #dadada;
+  --bg-image-light: url('/911.png');
+  --bg-image-dark: url('/911_dark.png');
+  --bg-image-light-mobile: url('/911_mobile.png');
+  --bg-image-dark-mobile: url('/911_mobile_dark.png');
 }
 
 [data-theme="dark"] {
@@ -33,18 +37,87 @@
 
   /* Dark theme colors */
   --color-bg-primary: #121212;
-  --color-bg-secondary: #1e1e1e;
-  --color-bg-tertiary: #2a2a2a;
+  --color-bg-secondary: #1e1e1efa;
+  --color-bg-tertiary: #2a2a2ada;
   --color-text-primary: #e0e0e0;
   --color-text-secondary: #b0b0b0;
   --color-text-tertiary: #888888;
   --color-text-accent: #ffffff;
   --color-border: #333333;
   --color-hover: #555;
-  --color-link: #7c7cff;
-  --color-link-hover: #8a8aff;
+  --color-link: #d1d1d1;
+  --color-link-hover: #d8d8d8;
   --color-button-bg: #444;
-  --color-button-hover: #7c7cff;
+  --color-button-hover: #b5b5b5;
+}
+
+/* Контейнер для фона */
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  will-change: opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+/* Основной фон */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0;
+  animation: fadeInBg 0.8s ease-out 0.5s forwards;
+  will-change: opacity;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Для светлой темы */
+[data-theme="light"] .background-image {
+  background-image: var(--bg-image-light);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .background-image {
+  background-image: var(--bg-image-dark);
+}
+
+/* Мобильные устройства */
+@media (max-width: 1024px) {
+  .background-image {
+    background-attachment: scroll;
+  }
+  
+  [data-theme="light"] .background-image {
+    background-image: var(--bg-image-light-mobile);
+  }
+  
+  [data-theme="dark"] .background-image {
+    background-image: var(--bg-image-dark-mobile);
+  }
+}
+
+/* Затемнение фона для лучшей читаемости */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-primary);
+  opacity: 0.85;
+  mix-blend-mode: normal;
 }
 
 a {
@@ -60,6 +133,51 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .go-to-menu-button {
+    display: block !important;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .go-to-menu-button button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+.go-to-menu-button {
+  display: none;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 30vw), 1fr));
+  gap: 2rem;
+  max-width: none;
+  animation: fadeIn 1s ease-out both;
+}
+
+
+@media (max-width: 1024px) {
+  .section-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.25rem;
+  }
 }
 
 h1 {
@@ -76,13 +194,111 @@ button {
   font-family: inherit;
   background-color: var(--color-button-bg);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, transform 0.2s, box-shadow 0.2s;
 }
 button:hover {
   border-color: var(--color-button-hover);
   background-color: var(--color-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backgroundPulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fadeInBg {
+  to {
+    opacity: 0.15; /* Или нужная вам прозрачность */
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.8s ease-out forwards;
+}
+
+.background-pulse {
+  background: linear-gradient(-45deg, var(--color-bg-primary), var(--color-bg-secondary), var(--color-bg-tertiary));
+  background-size: 400% 400%;
+  animation: backgroundPulse 4s ease infinite;
 }

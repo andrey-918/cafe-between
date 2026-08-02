@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ImageWithFallback } from './ImageWithFallback';
+import { getImageUrl } from '../api';
 
 interface MenuItemCardProps {
   id: number;
@@ -7,9 +8,11 @@ interface MenuItemCardProps {
   description: string;
   price: string;
   calories?: number;
-  image?: string;
+  image?: string | File;
   variants?: string[];
   popular?: boolean;
+  category?: string;
+  className?: string;
 }
 
 export function MenuItemCard({
@@ -20,31 +23,46 @@ export function MenuItemCard({
   calories,
   image,
   variants,
-  popular
+  popular,
+  category,
+  className
 }: MenuItemCardProps) {
+  const getImageSrc = (img: string | File) => {
+    if (typeof img === 'string') {
+      return getImageUrl(img);
+    }
+    return URL.createObjectURL(img);
+  };
+
   return (
     <Link to={`/menu/${id}`} className="menu-item-card-link">
-      <article className="menu-item-card">
+      <article className={`menu-item-card ${className || ''}`}>
         {image && (
           <div className="menu-item-card-image">
             <ImageWithFallback
-              src={image}
+              src={getImageSrc(image)}
               alt={name}
               className="menu-item-card-image-img"
             />
+            {popular && (
+              <div className="menu-item-card-popular-badge">
+                <span>★ Популярное</span>
+              </div>
+            )}
           </div>
         )}
 
         <div className="menu-item-card-content">
           <div className="menu-item-card-header">
-            <div className="menu-item-card-title-group">
-              <h3 className="menu-item-card-title">{name}</h3>
-              {popular && (
-                <span className="menu-item-card-popular">★</span>
-              )}
-            </div>
+            <h3 className="menu-item-card-title">{name}</h3>
             <span className="menu-item-card-price">{price} ₽</span>
           </div>
+
+          {category && (
+            <div className="menu-item-card-category">
+              <span className="menu-item-card-category-badge">{category}</span>
+            </div>
+          )}
 
           <p className="menu-item-card-description">
             {description}

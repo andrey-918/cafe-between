@@ -1,58 +1,138 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import type { MenuItem } from '../types';
-import { fetchMenuItem } from '../api';
+import { useParams, Link } from 'react-router-dom';
+import type { MenuItem, MenuCategory } from '../types';
+import { fetchMenuItem, fetchMenuCategories, getImageUrl } from '../api';
+import '../style/menu-detail.css';
 
 const MenuItemDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<MenuItem | null>(null);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadItem = async () => {
+    const loadData = async () => {
       if (!id) return;
       try {
-        const menuItem = await fetchMenuItem(parseInt(id));
+        const [menuItem, categoriesData] = await Promise.all([
+          fetchMenuItem(parseInt(id)),
+          fetchMenuCategories()
+        ]);
         setItem(menuItem);
+        setCategories(categoriesData);
       } catch (err) {
-        setError('Failed to load menu item');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
-    loadItem();
+    loadData();
+    window.scrollTo(0, 0);
   }, [id]);
 
-  if (loading) return <p>Загрузка...</p>;
+  if (loading) return (
+    <div className="menu-detail-container">
+      <div className="menu-detail-header">
+        <div className="back-link skeleton"></div>
+      </div>
+      <div className="menu-detail-layout">
+        <div className="menu-detail-image-column">
+          <div className="menu-detail-image-wrapper skeleton"></div>
+        </div>
+        <div className="menu-detail-info-column">
+          <div className="menu-detail-category">
+            <div className="menu-detail-category-badge skeleton"></div>
+          </div>
+          <div className="menu-detail-title skeleton"></div>
+          <div className="menu-detail-price-section">
+            <div className="menu-detail-price skeleton"></div>
+            <div className="menu-detail-calories skeleton"></div>
+          </div>
+          <div className="menu-detail-description">
+            <div className="menu-detail-description-title skeleton"></div>
+            <div className="menu-detail-description skeleton"></div>
+          </div>
+          <div className="menu-detail-meta">
+            <div className="menu-detail-meta-item">
+              <div className="menu-detail-meta-label skeleton"></div>
+              <div className="menu-detail-meta-value skeleton"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <p>{error}</p>;
   if (!item) return <p>Элемент не найден</p>;
 
+  const getCategoryName = (category: string) => {
+    const cat = categories.find(c => c.name_en === category);
+    return cat ? cat.name_ru : category;
+  };
+
+  const getImageSrc = (img: string | File) => {
+    if (typeof img === 'string') {
+      return getImageUrl(img);
+    }
+    return URL.createObjectURL(img);
+  };
+
   return (
-    <main>
-      <section className="menu-item-detail">
-        <h2>{item.title}</h2>
-        {item.imageURLs && item.imageURLs.length > 0 && (
-          <div className="photos">
-            {item.imageURLs.map((url, index) => (
-              <img key={index} src={url} alt={`${item.title} photo ${index + 1}`} />
-            ))}
+    <div className="menu-detail-container">
+      <div className="menu-detail-header">
+        <Link to="/menu" className="back-link" onClick={() => sessionStorage.removeItem('menuScrollPosition')}>
+          <svg className="back-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Назад к меню
+        </Link>
+      </div>
+
+      <div className="menu-detail-layout">
+        {/* Левая колонка - фото */}
+        <div className="menu-detail-image-column">
+          {item.imageURLs && item.imageURLs.length > 0 ? (
+            <div className="menu-detail-image-wrapper">
+              <img
+                src={getImageSrc(item.imageURLs[0])}
+                alt={item.title}
+                className="menu-detail-image"
+              />
+            </div>
+          ) : (
+            <div className="menu-detail-image-placeholder">
+              <span>Нет фото</span>
+            </div>
+          )}
+        </div>
+
+        {/* Правая колонка - информация */}
+        <div className="menu-detail-info-column">
+          <div className="menu-detail-category">
+            <span className="menu-detail-category-badge">
+              {getCategoryName(item.category)}
+            </span>
           </div>
-        )}
-        <p><strong>Цена:</strong> {item.price} руб.</p>
-        {item.calories && <p><strong>Калории:</strong> {item.calories}</p>}
-        {item.description && <p><strong>Описание:</strong> {item.description}</p>}
-        <p><strong>Категория:</strong> {
-          item.category === 'main_meal' ? 'Основное меню' :
-          item.category === 'snacks' ? 'Закуски' :
-          item.category === 'desserts' ? 'Десерты' :
-          item.category === 'drinks' ? 'Напитки' :
-          item.category
-        }</p>
-        <p><strong>Создано:</strong> {new Date(item.createdAt).toLocaleDateString()}</p>
-        <p><strong>Обновлено:</strong> {new Date(item.updatedAt).toLocaleDateString()}</p>
-      </section>
-    </main>
+          
+          <h1 className="menu-detail-title">{item.title}</h1>
+          
+          <div className="menu-detail-price-section">
+            <span className="menu-detail-price">{item.price} ₽</span>
+            {item.calories && (
+              <span className="menu-detail-calories">{item.calories} ккал</span>
+            )}
+          </div>
+
+          {item.description && (
+            <div className="menu-detail-description">
+              <h3 className="menu-detail-description-title">Описание</h3>
+              <p>{item.description}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

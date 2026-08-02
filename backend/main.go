@@ -15,6 +15,7 @@ import (
 func main() {
 	_ = godotenv.Load("../.env")
 	database.Init()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -24,7 +25,7 @@ func main() {
 	// CORS middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -44,6 +45,10 @@ func main() {
 	r.HandleFunc("/api/menu/{id}", handlers.DelMenuItemHandler).Methods("DELETE", "OPTIONS")
 	r.HandleFunc("/api/menu/{id}", handlers.UpdateMenuHandler).Methods("PUT", "OPTIONS")
 
+	r.HandleFunc("/api/menu-categories", handlers.GetMenuCategoriesHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/menu-categories/{id}", handlers.DeleteMenuCategoryHandler).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/menu-categories/{id}/sort-order", handlers.UpdateMenuCategorySortOrderHandler).Methods("PUT", "OPTIONS")
+
 	r.HandleFunc("/api/news", handlers.GetNewsHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/news", handlers.CreateNewsHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/news/{id}", handlers.GetNewsByIdHandler).Methods("GET", "OPTIONS")
@@ -52,6 +57,9 @@ func main() {
 
 	r.HandleFunc("/api/login", handlers.LoginHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/logout", handlers.LogoutHandler).Methods("POST", "OPTIONS")
+
+	// Serve static files from uploads directory
+	r.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("/root/uploads/"))))
 
 	adminRouter := r.PathPrefix("/api/admin").Subrouter()
 	adminRouter.Use(handlers.JWTMiddleware)
@@ -64,6 +72,8 @@ func main() {
 	adminRouter.HandleFunc("/news", handlers.CreateNewsHandler).Methods("POST", "OPTIONS")
 	adminRouter.HandleFunc("/news/{id}", handlers.UpdateNewsHandler).Methods("PUT", "OPTIONS")
 	adminRouter.HandleFunc("/news/{id}", handlers.DelNewsHandler).Methods("DELETE", "OPTIONS")
+
+	adminRouter.HandleFunc("/menu-categories/{id}", handlers.DeleteMenuCategoryHandler).Methods("DELETE", "OPTIONS")
 
 	log.Printf("Server started at :%s", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {

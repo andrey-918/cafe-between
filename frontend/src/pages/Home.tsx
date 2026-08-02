@@ -2,23 +2,72 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem, MenuItem } from '../types';
 import { fetchNews, fetchMenu } from '../api';
-import { MenuItemCard } from '../components/MenuItemCard';
+import '../style/home.css';
 
 const Home = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newsCount, setNewsCount] = useState(3); // По умолчанию 3
+
+  useEffect(() => {
+    // Определяем количество новостей на основе ширины экрана
+    const updateNewsCount = () => {
+      if (window.innerWidth <= 768) {
+        setNewsCount(2); // Для телефонов
+      } else {
+        setNewsCount(3); // Для компьютеров и планшетов
+      }
+    };
+
+    // Инициализируем при загрузке
+    updateNewsCount();
+
+    // Добавляем обработчик изменения размера окна
+    window.addEventListener('resize', updateNewsCount);
+
+    return () => {
+      window.removeEventListener('resize', updateNewsCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem('homeScrollPosition');
+    if (savedScroll) {
+      window.scrollTo(0, parseInt(savedScroll, 10));
+      sessionStorage.removeItem('homeScrollPosition');
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+    };
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const [newsData, menuData] = await Promise.all([fetchNews(), fetchMenu()]);
+        const newsArray = Array.isArray(newsData) ? newsData : [];
+        const menuArray = Array.isArray(menuData) ? menuData : [];
         const now = new Date();
-        const visibleNews = newsData.filter(item => new Date(item.postedAt) <= now);
-        setNews(visibleNews.slice(0, 3));
-        // Assume all menu items are popular for now, or filter by price > some value
-        setMenu(menuData.slice(0, 6)); // Take first 6 as popular
+        const visibleNews = newsArray.filter(item => new Date(item.postedAt) <= now);
+        
+        // Используем динамическое количество новостей
+        setNews(visibleNews.slice(0, newsCount));
+        
+        setMenu(menuArray.slice(0, 6));
       } catch (err) {
         setError('Failed to load data');
       } finally {
@@ -26,14 +75,21 @@ const Home = () => {
       }
     };
     loadData();
-  }, []);
+  }, [newsCount]); // Добавляем newsCount в зависимости
+
+  // Дополнительный эффект для обновления новостей при изменении newsCount
+  useEffect(() => {
+    if (news.length > newsCount) {
+      setNews(prevNews => prevNews.slice(0, newsCount));
+    }
+  }, [newsCount]);
 
   return (
     <div className="home">
       {/* Hero Section */}
       <section className="hero">
         <h1>Пространство между кофе и культурой</h1>
-        <p>BETWEEN — это место, где встречаются вкус и искусство. Мы создаём атмосферу для творческих людей, любителей хорошего кофе и культурных событий.</p>
+        <p>TheCafé — это место, где встречаются вкус и искусство. Мы создаём атмосферу для творческих людей, любителей хорошего кофе и культурных событий.</p>
 
         <div className="features">
           <div className="feature">
@@ -63,7 +119,7 @@ const Home = () => {
       </section>
 
       {/* Recent News */}
-      <section className="recent-news">
+      <section className="home-section-container fade-in">
         <div className="section-header">
           <h2>Новости</h2>
           <Link to="/news" className="view-all-link">Все новости →</Link>
@@ -71,49 +127,70 @@ const Home = () => {
 
         {loading && <p>Загрузка...</p>}
         {error && <p>{error}</p>}
-        <div className="home-news-grid">
-          {news.map((item) => (
-            <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
-              <article className="news-item-card">
-                <div className="news-item-image">
-                  <img src={item.imageURLs?.[0] || '/placeholder.jpg'} alt={item.title} />
-                </div>
-                <div className="news-item-content">
-                  <div className="news-item-meta">
-                    <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
-                    <span className="news-item-category">Событие</span>
+        <div className="section-grid">
+          {news.map((item, index) => {
+            const getImageSrc = (img: string | File) => {
+              if (typeof img === 'string') {
+                if (img.startsWith('/uploads/')) {
+                  return `${window.location.protocol}//${window.location.host}${img}`;
+                }
+                return img;
+              }
+              return URL.createObjectURL(img);
+            };
+
+            return (
+              <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
+                <article className={`news-item-card ${index % 2 === 0 ? 'slide-in-left-scroll' : 'slide-in-right-scroll'}`}>
+                  <div className="news-item-image">
+                    <img src={item.imageURLs?.[0] ? getImageSrc(item.imageURLs[0]) : '/placeholder.jpg'} alt={item.title} />
                   </div>
-                  <h3 className="news-item-title">{item.title}</h3>
-                  <p className="news-item-description">{item.description}</p>
-                  <span className="news-item-link-text">Подробнее →</span>
-                </div>
-              </article>
-            </Link>
-          ))}
+                  <div className="news-item-content">
+                    <div className="news-item-meta">
+                      <span className="news-item-date">{new Date(item.postedAt).toLocaleDateString()}</span>
+                      <span className="news-item-category">Событие</span>
+                    </div>
+                    <h3 className="news-item-title">{item.title}</h3>
+                    <p className="news-item-description">{item.description}</p>
+                    <span className="news-item-link-text">Подробнее →</span>
+                  </div>
+                </article>
+              </Link>
+            );
+          })}
         </div>
+
+        <Link to="/news" className="view-all-events-button">
+          <button>Посмотреть все события</button>
+        </Link>
       </section>
 
       {/* Popular Menu Items */}
-      <section className="popular-menu">
+      <section className="home-section-container fade-in">
         <div className="section-header">
           <h2>Популярные позиции</h2>
           <Link to="/menu" className="view-all-link">Всё меню →</Link>
         </div>
 
-        <div className="menu-grid">
+        <div className="popular-items-grid">
           {menu.map((item) => (
-            <MenuItemCard
-              key={item.id}
-              id={item.id}
-              name={item.title}
-              description={item.description || ''}
-              price={item.price.toString()}
-              calories={item.calories}
-              image={item.imageURLs?.[0]}
-              popular={true} // Assuming these are popular
-            />
+            <Link to={`/menu/${item.id}`} key={item.id}>
+              <div className="popular-item">
+                <div className="popular-item-content">
+                  <h3 className="popular-item-title">{item.title}</h3>
+                  <p className="popular-item-description">{item.description || ''}</p>
+                </div>
+                <div className="popular-item-price">
+                  <span>{item.price} ₽</span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
+
+        <Link to="/menu" className="go-to-menu-button">
+          <button>Перейти в меню</button>
+        </Link>
       </section>
     </div>
   );

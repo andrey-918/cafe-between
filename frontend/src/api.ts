@@ -1,6 +1,16 @@
-import type { MenuItem, NewsItem } from './types';
+import type { MenuItem, NewsItem, MenuCategory } from './types';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
+
+export const getImageUrl = (imagePath: string): string => {
+  if (imagePath.startsWith('http')) {
+    return imagePath;
+  }
+  if (imagePath.startsWith('/uploads/')) {
+    return `${window.location.protocol}//${window.location.host}${imagePath}`;
+  }
+  return `${window.location.protocol}//${window.location.host}/uploads/${imagePath}`;
+};
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('token');
@@ -11,10 +21,18 @@ const getAuthHeaders = (): Record<string, string> => {
   return headers;
 };
 
-export const fetchMenu = async (): Promise<MenuItem[]> => {
-  const response = await fetch(`${API_BASE_URL}/menu`);
+export const fetchMenu = async (signal?: AbortSignal): Promise<MenuItem[]> => {
+  const response = await fetch(`${API_BASE_URL}/menu`, { signal });
   if (!response.ok) {
     throw new Error('Failed to fetch menu');
+  }
+  return response.json();
+};
+
+export const fetchMenuCategories = async (signal?: AbortSignal): Promise<MenuCategory[]> => {
+  const response = await fetch(`${API_BASE_URL}/menu-categories`, { signal });
+  if (!response.ok) {
+    throw new Error('Failed to fetch menu categories');
   }
   return response.json();
 };
@@ -28,12 +46,22 @@ export const fetchMenuItem = async (id: number): Promise<MenuItem> => {
 };
 
 export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<MenuItem> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('price', item.price.toString());
+  formData.append('calories', (item.calories || 0).toString());
+  formData.append('description', item.description || '');
+  formData.append('category', item.category);
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/menu`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to create menu item');
@@ -42,12 +70,35 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id' | 'createdAt' | '
 };
 
 export const updateMenuItem = async (id: number, item: Omit<MenuItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('price', item.price.toString());
+  formData.append('calories', (item.calories || 0).toString());
+  formData.append('description', item.description || '');
+  formData.append('category', item.category);
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string').map(url => {
+    if (url.startsWith('http')) {
+      const base = `${window.location.protocol}//${window.location.host}/uploads/`;
+      if (url.startsWith(base)) {
+        return url.replace(base, '/uploads/');
+      } else {
+        return url; // external URL, keep as is
+      }
+    } else {
+      return url;
+    }
+  }) as string[];
+  formData.append('existingImages', JSON.stringify(existingImages));
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/menu/${id}`, {
     method: 'PUT',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to update menu item');
@@ -64,8 +115,8 @@ export const deleteMenuItem = async (id: number): Promise<void> => {
   }
 };
 
-export const fetchNews = async (): Promise<NewsItem[]> => {
-  const response = await fetch(`${API_BASE_URL}/news`);
+export const fetchNews = async (signal?: AbortSignal): Promise<NewsItem[]> => {
+  const response = await fetch(`${API_BASE_URL}/news`, { signal });
   if (!response.ok) {
     throw new Error('Failed to fetch news');
   }
@@ -81,12 +132,21 @@ export const fetchNewsItem = async (id: number): Promise<NewsItem> => {
 };
 
 export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<NewsItem> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('preview', item.preview || '');
+  formData.append('description', item.description || '');
+  formData.append('postedAt', item.postedAt);
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/news`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to create news item');
@@ -95,12 +155,34 @@ export const createNewsItem = async (item: Omit<NewsItem, 'id' | 'createdAt' | '
 };
 
 export const updateNewsItem = async (id: number, item: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
-  const headers = getAuthHeaders();
-  headers['Content-Type'] = 'application/json';
+  const formData = new FormData();
+  formData.append('title', item.title);
+  formData.append('preview', item.preview || '');
+  formData.append('description', item.description || '');
+  formData.append('postedAt', item.postedAt);
+  const existingImages = item.imageURLs.filter(url => typeof url === 'string').map(url => {
+    if (url.startsWith('http')) {
+      const base = `${window.location.protocol}//${window.location.host}/uploads/`;
+      if (url.startsWith(base)) {
+        return url.replace(base, '');
+      } else {
+        return url; // external URL, keep as is
+      }
+    } else {
+      return url;
+    }
+  }) as string[];
+  formData.append('existingImages', JSON.stringify(existingImages));
+  item.imageURLs.forEach((file) => {
+    if (file instanceof File) {
+      formData.append('images', file);
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/admin/news/${id}`, {
     method: 'PUT',
-    headers,
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(),
+    body: formData,
   });
   if (!response.ok) {
     throw new Error('Failed to update news item');
@@ -114,5 +196,34 @@ export const deleteNewsItem = async (id: number): Promise<void> => {
   });
   if (!response.ok) {
     throw new Error('Failed to delete news item');
+  }
+};
+
+export const updateMenuCategorySortOrder = async (id: number, sortOrder: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/menu-categories/${id}/sort-order`, {
+    method: 'PUT',
+    headers: {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sort_order: sortOrder }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update category sort order');
+  }
+};
+
+export const deleteMenuCategory = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/admin/menu-categories/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    if (response.status === 409) {
+      const data = await response.json();
+      throw data; // { error: string, items: MenuItem[] }
+    } else {
+      throw new Error('Failed to delete menu category');
+    }
   }
 };

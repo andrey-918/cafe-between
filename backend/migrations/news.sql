@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS news (
     title VARCHAR(255) NOT NULL,
     preview TEXT,
     description TEXT,
-    imageURLs TEXT[] NOT NULL,
+    imageURLs TEXT[],
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     postedAt TIMESTAMP DEFAULT '2025-11-16 23:59:59'
