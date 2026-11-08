@@ -13,6 +13,7 @@ interface MenuItemCardProps {
   popular?: boolean;
   category?: string;
   className?: string;
+  onClick?: () => void;
 }
 
 export function MenuItemCard({
@@ -25,7 +26,8 @@ export function MenuItemCard({
   variants,
   popular,
   category,
-  className
+  className,
+  onClick
 }: MenuItemCardProps) {
   const getImageSrc = (img: string | File) => {
     if (typeof img === 'string') {
@@ -35,7 +37,7 @@ export function MenuItemCard({
   };
 
   return (
-    <Link to={`/menu/${id}`} className="menu-item-card-link">
+    <Link to={`/menu/${id}`} className="menu-item-card-link" onClick={onClick}>
       <article className={`menu-item-card ${className || ''}`}>
         {image && (
           <div className="menu-item-card-image">

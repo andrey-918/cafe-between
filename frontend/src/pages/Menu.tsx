@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import type { MenuItem, MenuCategory } from '../types';
 import { fetchMenu, fetchMenuCategories } from '../api';
 import { MenuItemCard } from '../components/MenuItemCard';
@@ -31,31 +31,23 @@ const Menu = () => {
       return true;
     }
   });
+  const [hasLoaded, setHasLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!hasLoaded) return;
+
     const savedScroll = sessionStorage.getItem('menuScrollPosition');
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
+    if (savedScroll !== null) {
+      const scrollPosition = Number(savedScroll);
+      if (Number.isFinite(scrollPosition)) {
+        window.scrollTo(0, scrollPosition);
+      }
       sessionStorage.removeItem('menuScrollPosition');
     } else {
       window.scrollTo(0, 0);
     }
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      // Save on unmount for navigation
-      sessionStorage.setItem('menuScrollPosition', window.scrollY.toString());
-    };
-  }, []);
+  }, [hasLoaded]);
 
   useEffect(() => {
     try {
@@ -68,7 +60,7 @@ const Menu = () => {
       } else {
         setLoading(true);
       }
-    } catch (e) {
+    } catch {
       setLoading(true);
     }
 
@@ -80,13 +72,14 @@ const Menu = () => {
         try {
           localStorage.setItem('menu', JSON.stringify(menuData));
           localStorage.setItem('menuCategories', JSON.stringify(categoriesData));
-        } catch (e) {
+        } catch {
           // Ignore storage errors
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load data');
       } finally {
         setLoading(false);
+        setHasLoaded(true);
       }
     };
     loadData();
@@ -148,6 +141,7 @@ const Menu = () => {
                     category={categoryNames[category] || category}
                     popular={false} // You can add logic to determine if item is popular
                     className="fade-in"
+                    onClick={() => sessionStorage.setItem('menuScrollPosition', window.scrollY.toString())}
                   />
                 ))}
               </div>
