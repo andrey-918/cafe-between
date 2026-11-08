@@ -41,7 +41,7 @@ func GetNews() ([]News, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var news []News
+	news := make([]News, 0)
 	for rows.Next() {
 		var item News
 		err := rows.Scan(&item.ID, &item.Title, &item.Preview, &item.Description, &item.ImageURLs, &item.CreatedAt, &item.UpdatedAt, &item.PostedAt)
@@ -49,6 +49,9 @@ func GetNews() ([]News, error) {
 			return nil, err
 		}
 		news = append(news, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return news, nil
 }

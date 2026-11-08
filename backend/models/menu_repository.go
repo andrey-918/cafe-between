@@ -41,7 +41,7 @@ func GetMenu() ([]MenuItem, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var menu []MenuItem
+	menu := make([]MenuItem, 0)
 	for rows.Next() {
 		var item MenuItem
 		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.Category, &item.CreatedAt, &item.UpdatedAt)
@@ -49,6 +49,9 @@ func GetMenu() ([]MenuItem, error) {
 			return nil, err
 		}
 		menu = append(menu, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return menu, nil
 }
@@ -85,7 +88,7 @@ func GetMenuItemsByCategory(categoryEn string) ([]MenuItem, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []MenuItem
+	items := make([]MenuItem, 0)
 	for rows.Next() {
 		var item MenuItem
 		err := rows.Scan(&item.ID, &item.Title, &item.Price, &item.ImageURLs, &item.Calories, &item.Description, &item.Category, &item.CreatedAt, &item.UpdatedAt)
@@ -93,6 +96,9 @@ func GetMenuItemsByCategory(categoryEn string) ([]MenuItem, error) {
 			return nil, err
 		}
 		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return items, nil
 }

@@ -1,140 +1,113 @@
-/* Header */
 .header {
-  border-bottom: 1px solid var(--color-border);
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   z-index: 1000;
-  background-color: var(--color-bg-secondary);
+  inset: 0 0 auto;
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-secondary) 94%, transparent);
+  backdrop-filter: blur(16px);
 }
 
 .header-container {
-  max-width: 1280px;
+  width: min(1184px, calc(100% - 64px));
   margin: 0 auto;
-  padding: 0 24px;
 }
 
 .header-content {
   display: flex;
+  min-height: 80px;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 0;
 }
 
 .logo-link {
+  color: var(--color-text-accent);
   text-decoration: none;
 }
 
 .logo-text {
-  font-size: 18px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.28rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--color-text-accent);
+  letter-spacing: 0.02em;
 }
 
 .nav {
   display: flex;
-  gap: 48px;
+  align-items: center;
+  gap: clamp(24px, 3.5vw, 48px);
 }
 
 .nav-link {
+  position: relative;
+  padding: 8px 0;
+  border: 0;
+  background: none;
   color: var(--color-text-secondary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.86rem;
   text-decoration: none;
-  transition: color 0.2s, transform 0.2s;
-  font-size: 16px;
+  transition: color 180ms ease;
 }
 
-
-
-.nav-link:hover {
-  transform: translateY(-2px);
-  color: var(--color-text-primary);
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-link);
 }
 
-/* Mobile Navigation */
+.nav-link.active::after {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 0;
+  height: 1px;
+  background: var(--color-link);
+  content: '';
+}
+
+.nav .logout-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .nav-toggle {
   display: none;
-  background: none;
-  border: none;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
 }
 
 .nav-toggle:hover {
-  background-color: var(--color-bg-tertiary);
-}
-
-.nav-toggle-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--color-text-primary);
-}
-
-.nav-menu.mobile {
-  position: fixed;
-  align-items: center;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 768px;
-  background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-  flex-direction: column;
-  gap: 0;
-  padding: 16px 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  display: none;
-}
-
-.nav-menu.mobile.open {
-  display: flex;
-}
-
-.nav-menu.mobile .nav-link {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
-  font-size: 18px;
-}
-
-.nav-menu.mobile .nav-link:last-child {
-  border-bottom: none;
-}
-
-.nav-menu.mobile .logout-btn {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.2s, transform 0.2s;
-  font-size: 18px;
-  padding: 12px 0;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-}
-
-.nav-menu.mobile .logout-btn:hover {
-  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-accent);
   transform: none;
 }
 
-/* Responsive Header */
-@media (max-width: 768px) {
+.nav-toggle-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-accent);
+}
+
+.nav-menu.mobile {
+  display: none;
+}
+
+@media (max-width: 760px) {
   .header-container {
-    padding: 0 16px;
+    width: calc(100% - 40px);
   }
 
   .header-content {
-    padding: 16px 0;
-  }
-
-  .logo-text {
-    font-size: 16px;
+    min-height: 60px;
   }
 
   .nav {
@@ -142,10 +115,53 @@
   }
 
   .nav-toggle {
-    display: block;
+    display: inline-flex;
   }
 
-  .home {
-    padding-top: 60px; /* Adjust for mobile header height */
+  .nav-menu.mobile {
+    position: absolute;
+    top: calc(100% + 1px);
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 20px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
+    box-shadow: 0 14px 28px rgba(35, 29, 22, 0.09);
+  }
+
+  .nav-menu.mobile:not(.open) {
+    display: none;
+  }
+
+  .nav-menu.mobile .nav-link {
+    min-height: 48px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.95rem;
+  }
+
+  .nav-menu.mobile .nav-link.active::after {
+    right: auto;
+    bottom: 11px;
+    width: 26px;
+  }
+
+  .nav-menu.mobile .nav-link:last-child {
+    border-bottom: 0;
+  }
+
+  .nav-menu.mobile .logout-btn {
+    width: 100%;
+    padding: 14px 0;
+    color: var(--color-text-secondary);
+    text-align: left;
+  }
+
+  .nav-menu.mobile .logout-btn:hover {
+    color: var(--color-link);
   }
 }

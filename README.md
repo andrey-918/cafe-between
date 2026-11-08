@@ -269,6 +269,8 @@ CREATE TABLE IF NOT EXISTS news (
 Docker Compose использует переменные окружения (задайте их в `.env` в корне проекта):
 
 - `POSTGRES_DSN` — строка подключения к Postgres (используется в `backend/internal/database/database.go`)
+- `POSTGRES_PASSWORD` — пароль пользователя Postgres; используется контейнерами базы данных и backend
+- `POSTGRES_HOST_PORT` — порт Postgres на компьютере (по умолчанию 5434; можно изменить, если порт занят)
 - `BACKEND_PORT` — порт backend (по умолчанию 8080)
 - `JWT_SECRET` — секрет для подписи JWT (`backend/internal/handlers/authHandler.go`)
 - `ADMIN_PASSWORD` — пароль администратора для `/api/login`
@@ -282,9 +284,11 @@ docker compose up --build
 ```
 
 Контейнеры:
-- `db` (Postgres): доступен на `5433:5432`
+- `db` (Postgres): доступен в Docker-сети на `db:5432` и на компьютере на `localhost:5434` (либо `POSTGRES_HOST_PORT`)
 - `backend`: доступен на `BACKEND_PORT` (дефолт 8080)
 - `frontend` (nginx): порты `80:80` и `443:443`
+
+Для запуска приложения с базой данных выполните `docker compose up --build`. Если порт 5434 занят, задайте другой, например `POSTGRES_HOST_PORT=5435 docker compose up --build`. Backend в контейнере автоматически подключается к адресу `db` и использует пароль из `POSTGRES_PASSWORD`.
 
 ---
 

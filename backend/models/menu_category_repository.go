@@ -44,7 +44,7 @@ func GetMenuCategories() ([]MenuCategory, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var categories []MenuCategory
+	categories := make([]MenuCategory, 0)
 	for rows.Next() {
 		var cat MenuCategory
 		err := rows.Scan(&cat.ID, &cat.NameRu, &cat.NameEn, &cat.SortOrder, &cat.CreatedAt)
@@ -52,6 +52,9 @@ func GetMenuCategories() ([]MenuCategory, error) {
 			return nil, err
 		}
 		categories = append(categories, cat)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return categories, nil
 }

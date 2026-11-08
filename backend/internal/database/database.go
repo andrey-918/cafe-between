@@ -18,7 +18,18 @@ func Init() {
 		log.Fatal("POSTGRES_DSN not set in .env")
 	}
 
-	pool, err := pgxpool.New(context.Background(), dsn)
+	config, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		log.Fatalf("Unable to parse database connection string: %v", err)
+	}
+	if host := os.Getenv("POSTGRES_HOST"); host != "" {
+		config.ConnConfig.Host = host
+		if password := os.Getenv("POSTGRES_PASSWORD"); password != "" {
+			config.ConnConfig.Password = password
+		}
+	}
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
