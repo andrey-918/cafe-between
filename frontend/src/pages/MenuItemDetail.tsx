@@ -21,7 +21,7 @@ const MenuItemDetail = () => {
         ]);
         setItem(menuItem);
         setCategories(categoriesData);
-      } catch (err) {
+      } catch {
         setError('Failed to load data');
       } finally {
         setLoading(false);
@@ -81,7 +81,7 @@ const MenuItemDetail = () => {
   return (
     <div className="menu-detail-container">
       <div className="menu-detail-header">
-        <Link to="/menu" className="back-link" onClick={() => sessionStorage.removeItem('menuScrollPosition')}>
+        <Link to="/menu" className="back-link">
           <svg className="back-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>

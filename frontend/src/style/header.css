@@ -67,7 +67,14 @@
 .nav .logout-btn {
   border: 0;
   background: transparent;
+  color: var(--color-text-secondary);
   cursor: pointer;
+}
+
+.nav .logout-btn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-link);
+  transform: none;
 }
 
 .nav-toggle {
