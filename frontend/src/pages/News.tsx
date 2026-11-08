@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { NewsItem } from '../types';
 import { fetchNews } from '../api';
@@ -24,29 +24,20 @@ const News = () => {
   });
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading) {
-      const savedScroll = sessionStorage.getItem('newsScrollPosition');
-      if (savedScroll) {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-        sessionStorage.removeItem('newsScrollPosition');
-      } else {
-        window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    if (loading) return;
+
+    const savedScroll = sessionStorage.getItem('newsScrollPosition');
+    if (savedScroll !== null) {
+      const scrollPosition = Number(savedScroll);
+      if (Number.isFinite(scrollPosition)) {
+        window.scrollTo(0, scrollPosition);
       }
+      sessionStorage.removeItem('newsScrollPosition');
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [loading]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.setItem('newsScrollPosition', window.scrollY.toString());
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
 
   useEffect(() => {
     try {
@@ -116,7 +107,12 @@ const News = () => {
           };
 
           return (
-            <Link key={item.id} to={`/news/${item.id}`} className="news-item-link">
+            <Link
+              key={item.id}
+              to={`/news/${item.id}`}
+              className="news-item-link"
+              onClick={() => sessionStorage.setItem('newsScrollPosition', window.scrollY.toString())}
+            >
               <article className="news-item-card fade-in">
                 {item.imageURLs && item.imageURLs.length > 0 && (
                   <div className="news-item-image">
